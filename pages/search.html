@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f6fa;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #303942;
+            overflow-x: hidden;
+            padding-top: 5px;
+            transition: 0.5s;
+        }
+
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .logo img {
+            width: 70px;
+            height: auto;
+        }
+
+        .sidebar .logo-text {
+            font-size: 16px;
+            color: #cbcbcb;
+            font-weight: normal;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #9f9f9f;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #c2c2c2;
+            /* text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); */
+        }
+
+        .sidebar .active {
+            background-color: #556270;
+        }
+
+        .sidebar a.active {
+            background-color: transparent;
+            color: #ffffff;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .hamburger {
+            font-size: 24px;
+            cursor: pointer;
+            color: #303942;
+            margin-right: 15px;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #303942;
+        }
+
+        .content {
+            margin-left: 270px;
+            /* 250px (sidebar width) + 20px (desired margin) */
+            padding: 15px;
+            padding-top: 70px;
+            transition: 0.5s;
+        }
+
+        .content h1 {
+            text-align: center;
+            color: #303942;
+            margin-top: 50px;
+        }
+
+        .content img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .content p {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 16px;
+            color: #8c8c8c;
+        }
+
+        /* Footer Styling */
+        .footer {
+            background-color: #e0e0e0;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 250px);
+            left: 250px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+        }
+
+        .footer .copyright {
+            margin: 0;
+            font-size: 14px;
+            color: #303942;
+        }
+
+        /* Responsive and Sidebar Toggle */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+
+            .navbar {
+                left: 0;
+                width: 100%;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .footer {
+                width: 100%;
+                left: 0;
+            }
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto 20px 0;
+            /* Auto pada kanan agar card tidak berada di tengah */
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #303942;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Form Styling */
+        .card form {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: -6px 0;
+        }
+
+        .card input[type="text"] {
+            flex-grow: 1;
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .card input[type="submit"] {
+            padding: 5px 15px;
+            font-size: 14px;
+            background-color: #303942;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card input[type="submit"]:hover {
+            background-color: #556270;
+        }
+
+        .card button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #303942;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card button:hover {
+            background-color: #556270;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="mySidebar">
+        <div class="logo">
+            <img src="../src/logo-owl.png" alt="Logo">
+            <span class="logo-text" style="color: white;"><b>Reconnaissance</b></span>
+        </div>
+        <a href="search.html" class="active">Search Engine</a>
+        <a href="#">Facebook</a>
+        <a href="#">Twitter</a>
+        <a href="#">Instagram</a>
+        <a href="#">Linkedin</a>
+        <a href="#">Comunities</a>
+        <a href="#">Email Address</a>
+        <a href="#">Usernames</a>
+        <a href="#">Name</a>
+        <a href="#">Documents</a>
+        <a href="#">Pastes</a>
+        <a href="#">Image</a>
+        <a href="#">Domain</a>
+        <a href="#">IP Address</a>
+        <a href="#">Vehicles</a>
+        <a href="#">Data Breach & Leaks</a>
+        <a href="#">Documents</a>
+        <a href="#">Mahkamah Agung</a>
+        <a href="#">Pendidikan</a>
+        <a href="#">Goverments</a>
+        <a href="#">Bussniess</a>
+        <a href="#">OSINT Flow charts</a>
+    </div>
+
+    <!-- Navbar -->
+    <div class="navbar" id="myNavbar">
+        <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
+        <h1><a href="../index.html" style="text-decoration: none; color: inherit;">OSINT Dashboard</a></h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="myContent">
+        <div class="card">
+            <h2 style="font-size: 18px; text-align: left;">OSINT SEARCH ENGINE</h2>
+            <div class="card-body">
+                <form onsubmit="doPopAll(this.PopAll.value); return false;">
+                    <input type="text" id="PopAll" name="PopAll" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Populate All" />
+                </form>
+                <br><br>
+
+                <!-- Form Search01 -->
+                <form onsubmit="doSearch01(this.Search01.value); return false;">
+                    <input type="text" id="Search01" name="Search01" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Google" />
+                </form>
+                <br>
+
+                <!-- Form Search02 -->
+                <form onsubmit="doSearch02(this.Search02.value); return false;">
+                    <input type="text" id="Search02" name="Search02" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Google Date" />
+                </form>
+                <br>
+
+                <!-- Form Search03 -->
+                <form onsubmit="doSearch03(this.Search03.value); return false;">
+                    <input type="text" id="Search03" name="Search03" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Google News" />
+                </form>
+                <br>
+
+                <!-- Form Search04 -->
+                <form onsubmit="doSearch04(this.Search04.value); return false;">
+                    <input type="text" id="Search04" name="Search04" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Google Blogs" />
+                </form>
+                <br>
+
+                <!-- Form Search05 -->
+                <form onsubmit="doSearch05(this.Search05.value); return false;">
+                    <input type="text" id="Search05" name="Search05" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Google FTP" />
+                </form>
+                <br>
+
+                <!-- Form Search06 -->
+                <form onsubmit="doSearch06(this.Search06.value); return false;">
+                    <input type="text" id="Search06" name="Search06" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Google Index" />
+                </form>
+                <br>
+
+                <!-- Form Search07 -->
+                <form onsubmit="doSearch07(this.Search07.value); return false;">
+                    <input type="text" id="Search07" name="Search07" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Google Scholar" />
+                </form>
+                <br>
+
+                <!-- Form Search08 -->
+                <form onsubmit="doSearch08(this.Search08.value); return false;">
+                    <input type="text" id="Search08" name="Search08" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Google Patens" />
+                </form>
+                <br>
+
+                <!-- Form Search09 -->
+                <form onsubmit="doSearch09(this.Search09.value); return false;">
+                    <input type="text" id="Search09" name="Search09" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Bing" />
+                </form>
+                <br>
+
+                <!-- Form Search10 -->
+                <form onsubmit="doSearch10(this.Search10.value); return false;">
+                    <input type="text" id="Search10" name="Search10" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Bing News" />
+                </form>
+                <br>
+
+                <!-- Form Search11 -->
+                <form onsubmit="doSearch11(this.Search11.value); return false;">
+                    <input type="text" id="Search11" name="Search11" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Yahoo" />
+                </form>
+                <br>
+
+                <!-- Form Search12 -->
+                <form onsubmit="doSearch12(this.Search12.value); return false;">
+                    <input type="text" id="Search12" name="Search12" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Yandex" />
+                </form>
+                <br>
+
+                <!-- Form Search13 -->
+                <form onsubmit="doSearch13(this.Search13.value); return false;">
+                    <input type="text" id="Search13" name="Search13" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Baidu" />
+                </form>
+                <br>
+
+                <!-- Form Search14 -->
+                <form onsubmit="doSearch14(this.Search14.value); return false;">
+                    <input type="text" id="Search14" name="Search14" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Searx" />
+                </form>
+                <br>
+
+                <!-- Form Search15 -->
+                <form onsubmit="doSearch15(this.Search15.value); return false;">
+                    <input type="text" id="Search15" name="Search15" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Exalead" />
+                </form>
+                <br>
+
+                <!-- Form Search16 -->
+                <form onsubmit="doSearch16(this.Search16.value); return false;">
+                    <input type="text" id="Search16" name="Search16" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="DuckDuck Go" />
+                </form>
+                <br>
+
+                <!-- Form Search17 -->
+                <form onsubmit="doSearch17(this.Search17.value); return false;">
+                    <input type="text" id="Search17" name="Search17" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="StartPage" />
+                </form>
+                <br>
+
+                <!-- Form Search18 -->
+                <form onsubmit="doSearch18(this.Search18.value); return false;">
+                    <input type="text" id="Search18" name="Search18" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Qwant" />
+                </form>
+                <br>
+
+                <!-- Form Search19 -->
+                <form onsubmit="doSearch19(this.Search19.value); return false;">
+                    <input type="text" id="Search19" name="Search19" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Brave" />
+                </form>
+                <br>
+
+                <!-- Form Search20 -->
+                <form onsubmit="doSearch20(this.Search20.value); return false;">
+                    <input type="text" id="Search20" name="Search20" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Wayback" />
+                </form>
+                <br>
+
+                <form onsubmit="doSearch35(this.Search35.value); return false;">
+                    <input type="text" id="Search35" name="Search35" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Ahmia.fi" />
+                </form>
+                <br>
+                <br>
+
+                <!-- Form Search All -->
+                <form onsubmit="doall(this.all.value); return false;">
+                    <input type="text" id="Search99" name="all" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Submit All" />
+                </form>
+                <br>
+
+                <p style="text-align: left; color: black; margin-top: 10px;">Tor Browser :</p>
+
+                <!-- Form Search21 -->
+                <form onsubmit="doSearch21(this.Search21.value); return false;">
+                    <input type="text" id="Search21" name="Search21" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Torch" />
+                </form>
+                <br>
+
+                <!-- Form Search22 -->
+                <form onsubmit="doSearch22(this.Search22.value); return false;">
+                    <input type="text" id="Search22" name="Search22" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Tor66" />
+                </form>
+                <br>
+
+                <!-- Form Search23 -->
+                <form onsubmit="doSearch23(this.Search23.value); return false;">
+                    <input type="text" id="Search23" name="Search23" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Haystack" />
+                </form>
+                <br>
+
+                <!-- Form Search24 -->
+                <form onsubmit="doSearch24(this.Search24.value); return false;">
+                    <input type="text" id="Search24" name="Search24" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Ahmia" />
+                </form>
+                <br>
+
+                <!-- Form Search25 -->
+                <form onsubmit="doSearch25(this.Search25.value); return false;">
+                    <input type="text" id="Search25" name="Search25" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="SearchDemon" />
+                </form>
+                <br>
+
+                <!-- Form Search26 -->
+                <form onsubmit="doSearch26(this.Search26.value); return false;">
+                    <input type="text" id="Search26" name="Search26" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Excafator" />
+                </form>
+                <br>
+
+                <!-- Form Search27-->
+                <form onsubmit="doSearch27(this.Search27.value); return false;">
+                    <input type="text" id="Search27" name="Search27" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="GDark" />
+                </form>
+                <br>
+
+                <!-- Form Search28 -->
+                <form onsubmit="doSearch28(this.Search28.value); return false;">
+                    <input type="text" id="Search28" name="Search28" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Hidden Reviews" />
+                </form>
+                <br>
+
+                <!-- Form Search29 -->
+                <form onsubmit="doSearch29(this.Search29.value); return false;">
+                    <input type="text" id="Search29" name="Search29" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Onion Land" />
+                </form>
+                <br>
+
+                <!-- Form Search30 -->
+                <form onsubmit="doSearch30(this.Search30.value); return false;">
+                    <input type="text" id="Search30" name="Search30" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Phobos" />
+                </form>
+                <br>
+
+                <!-- Form Search31 -->
+                <form onsubmit="doSearch31(this.Search31.value); return false;">
+                    <input type="text" id="Search31" name="Search31" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Submarine" />
+                </form>
+                <br>
+
+                <!-- Form Search32 -->
+                <form onsubmit="doSearch32(this.Search32.value); return false;">
+                    <input type="text" id="Search32" name="Search32" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="DeepSearch" />
+                </form>
+                <br>
+
+                <!-- Form Search33 -->
+                <form onsubmit="doSearch33(this.Search33.value); return false;">
+                    <input type="text" id="Search33" name="Search33" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="OnionCenter" />
+                </form>
+                <br>
+
+                <!-- Form Search34 -->
+                <form onsubmit="doSearch34(this.Search34.value); return false;">
+                    <input type="text" id="Search34" name="Search34" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="FreshOnion" />
+                </form>
+                <br>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            function doPopAll(PopAll) {
+                var pop = document.getElementById("PopAll");
+                for (j = 1; j <= 100; j++) {
+                    if (j < 10) {
+                        j = "0" + j.toString();
+                    } else {
+                        j = j.toString();
+                    }
+                    console.log(j)
+                    item = document.getElementById("Search" + j);
+                    if (item != null) {
+                        item.value = pop.value;
+                    }
+                }
+            }
+
+            function doSearch01(Search01) {
+                window.open('http://google.com/search?q=' + Search01, 'Search01window');
+            }
+
+            function doSearch02(Search02) {
+                window.open('http://google.com/search?q=' + Search02 + '&tbs=cdr:1,cd_min:1/1/0,sbd:1',
+                    'Search02window');
+            }
+
+            function doSearch03(Search03) {
+                window.open('http://www.google.com/search?tbm=nws&q=' + Search03, 'Search03window');
+            }
+
+            function doSearch04(Search04) {
+                window.open('https://www.google.com/search?q=' + Search04 + '&tbm=nws&tbs=nrt:b', 'Search04window');
+            }
+
+            function doSearch05(Search05) {
+                window.open('https://www.google.com/search?q=inurl%3Aftp%20-inurl%3A(http|https)%20' +
+                    Search05, 'Search05window');
+            }
+
+            function doSearch06(Search06) {
+                window.open('https://www.google.com/search?q=intitle%3Aindex.of+' + Search06,
+                    'Search06window');
+            }
+
+            function doSearch07(Search07) {
+                window.open('http://scholar.google.com/scholar?&q=' + Search07, 'Search07window');
+            }
+
+            function doSearch08(Search08) {
+                window.open('https://patents.google.com/?q=' + Search08, 'Search08window');
+            }
+
+            function doSearch09(Search09) {
+                window.open('http://bing.com/search?q="' + Search09 + '"', 'Search09window');
+            }
+
+            function doSearch10(Search10) {
+                window.open('http://bing.com/news/search?q="' + Search10 + '"', 'Search10window');
+            }
+
+            function doSearch11(Search11) {
+                window.open('http://search.yahoo.com/search?p=' + Search11, 'Search11window');
+            }
+
+            function doSearch12(Search12) {
+                window.open('http://www.yandex.com/yandsearch?text=' + Search12, 'Search12window');
+            }
+
+            function doSearch13(Search13) {
+                window.open('http://baidu.com/s?wd=' + Search13, 'Search13window');
+            }
+
+            function doSearch14(Search14) {
+                window.open('https://searx.be/?q=' + Search14, 'Search14window');
+            }
+
+            function doSearch15(Search15) {
+                window.open('http://www.exalead.com/search/web/results/?q=' + Search15, 'Search15window');
+            }
+
+            function doSearch16(Search16) {
+                window.open('https://duckduckgo.com/?q=' + Search16, 'Search16window');
+            }
+
+            function doSearch17(Search17) {
+                window.open('https://startpage.com/do/search?q=' + Search17, 'Search17window');
+            }
+
+            function doSearch18(Search18) {
+                window.open('https://www.qwant.com/?q=' + Search18, 'Search18window');
+            }
+
+            function doSearch19(Search19) {
+                window.open('https://search.brave.com/search?q=' + Search19, 'Search19window');
+            }
+
+            function doSearch20(Search20) {
+                window.open('https://web.archive.org/web/*/' + Search20, 'Search20window');
+            }
+
+            function doSearch21(Search21) {
+                window.open('http://torch4st4l57l2u2vr5wqwvwyueucvnrao4xajqr2klmcmicrv7ccaad.onion/search?query=' +
+                    Search21 + '&action=search', 'Search21window');
+            }
+
+            function doSearch22(Search22) {
+                window.open('http://www.tor66sewebgixwhcqfnp5inzp5x5uohhdy3kvtnyfxc2e5mxiuh34iid.onion/search?q=' +
+                    Search22, 'Search22window');
+            }
+
+            function doSearch23(Search23) {
+                window.open('http://haystak5njsmn2hqkewecpaxetahtwhsbsa64jom2k22z5afxhnpxfid.onion/?q=' +
+                    Search23, 'Search23window');
+            }
+
+            function doSearch24(Search24) {
+                window.open('http://juhanurmihxlp77nkq76byazcldy2hlmovfu2epvl5ankdibsot4csyd.onion/search/?q=' +
+                    Search24, 'Search24window');
+            }
+
+            function doSearch25(Search25) {
+                window.open('http://srcdemonm74icqjvejew6fprssuolyoc2usjdwflevbdpqoetw4x3ead.onion/search?q=' +
+                    Search25, 'Search25window');
+            }
+
+            function doSearch26(Search26) {
+                window.open('http://2fd6cemt4gmccflhm6imvdfvli3nf7zn6rfrwpsy7uhxrgbypvwf5fad.onion/search/' +
+                    Search26, 'Search26window');
+            }
+
+            function doSearch27(Search27) {
+                window.open(
+                    'http://zb2jtkhnbvhkya3d46twv3g7lkobi4s62tjffqmafjibixk6pmq75did.onion/gdark/search.php?query=' +
+                    Search27, 'Search27window');
+            }
+
+            function doSearch28(Search28) {
+                window.open('http://u5lyidiw4lpkonoctpqzxgyk6xop7w7w3oho4dzzsi272rwnjhyx7ayd.onion/?s=' +
+                    Search28, 'Search28window');
+            }
+
+            function doSearch29(Search29) {
+                window.open('http://3bbad7fauom4d6sgppalyqddsqbf5u5p56b5k5uk2zxsy3d6ey2jobad.onion/search?q=' +
+                    Search29, 'Search29window');
+            }
+
+            function doSearch30(Search30) {
+                window.open('http://phobosxilamwcg75xt22id7aywkzol6q6rfl2flipcqoc4e4ahima5id.onion/search?query=' +
+                    Search30, 'Search30window');
+            }
+
+            function doSearch31(Search31) {
+                window.open('http://no6m4wzdexe3auiupv2zwif7rm6qwxcyhslkcnzisxgeiw6pvjsgafad.onion/search.php?term=' +
+                    Search31, 'Search31window');
+            }
+
+            function doSearch32(Search32) {
+                window.open('http://searchgf7gdtauh7bhnbyed4ivxqmuoat3nm6zfrg3ymkq6mtnpye3ad.onion/search?q=' +
+                    Search32, 'Search32window');
+            }
+
+            function doSearch33(Search33) {
+                window.open(
+                    'http://5qqrlc7hw3tsgokkqifb33p3mrlpnleka2bjg7n46vih2synghb6ycid.onion/index.php?a=search&q=' +
+                    Search33, 'Search33window');
+            }
+
+            function doSearch34(Search34) {
+                window.open('http://freshonifyfe4rmuh6qwpsexfhdrww7wnt5qmkoertwxmcuvm4woo4ad.onion/?query=' +
+                    Search34, 'Search34window');
+            }
+
+            function doSearch35(Search35) {
+                window.open('https://ahmia.fi/search/?q=' + Search35, 'Search35window');
+            }
+
+            function doall(all) {
+                window.open('http://google.com/search?q=' + all, 'Search01window');
+                window.open('http://google.com/search?q=' + all + '&tbs=cdr:1,cd_min:1/1/0,sbd:1', 'Search02window');
+                window.open('http://bing.com/search?q=' + all, 'Search03window');
+                window.open('http://search.yahoo.com/search?p=' + all, 'Search04window');
+                window.open('https://searx.me/?q=' + all, 'Search05window');
+                window.open('http://www.yandex.com/yandsearch?text=' + all, 'Search06window');
+                window.open('http://baidu.com/s?wd=' + all, 'Search07window');
+                window.open('http://www.exalead.com/search/web/results/?q=' + all, 'Search08window');
+                window.open('https://duckduckgo.com/?q=' + all, 'Search09window');
+                window.open('https://startpage.com/do/search?q=' + all, 'Search10window');
+                window.open('https://groups.google.com/forum/?fromgroups#!search/' + all, 'Search11window');
+                window.open('https://www.google.com/search?q=' + all + '&tbm=nws&tbs=nrt:b', 'Search12window');
+                window.open('https://www.google.com/?gws_rd=ssl#q=inurl:ftp+-inurl:(http%7Chttps)+' + all,
+                    'Search13window');
+                window.open('https://www.google.com/search?q=intitle%3Aindex.of+' + all, 'Search14window');
+                window.open('http://scholar.google.com/scholar?&q=' + all, 'Search15window');
+                window.open('https://patents.google.com/?q=' + all, 'Search16window');
+                window.open('https://www.qwant.com/?q=' + all, 'Search17window');
+                window.open('http://www.google.com/search?tbm=nws&q=' + all, 'Search18window');
+                window.open('https://web.archive.org/web/*/' + all, 'Search19window');
+                window.open('https://ahmia.fi/search/?q=' + all, 'Search20window');
+            }
+        </script>
+    </div>
+
+    <!-- Footer -->
+    <br><br>
+    <div class="footer">
+        <p class="copyright">&copy; 2024 Dika Maulidal. All Rights Reserved.</p>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById("mySidebar");
+            var navbar = document.getElementById("myNavbar");
+            var content = document.getElementById("myContent");
+            var footer = document.querySelector(".footer");
+
+            if (sidebar.style.width === "0px" || sidebar.style.width === "") {
+                sidebar.style.width = "250px";
+                navbar.style.left = "250px";
+                navbar.style.width = "calc(100% - 250px)";
+                content.style.marginLeft = "270px";
+                footer.style.width = "calc(100% - 250px)";
+                footer.style.left = "250px";
+            } else {
+                sidebar.style.width = "0";
+                navbar.style.left = "0";
+                navbar.style.width = "100%";
+                content.style.marginLeft = "0";
+                footer.style.width = "100%";
+                footer.style.left = "0";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

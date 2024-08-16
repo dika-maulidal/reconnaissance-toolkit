@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f6fa;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #303942;
+            overflow-x: hidden;
+            padding-top: 5px;
+            transition: 0.5s;
+        }
+
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .logo img {
+            width: 70px;
+            height: auto;
+        }
+
+        .sidebar .logo-text {
+            font-size: 16px;
+            color: #cbcbcb;
+            font-weight: normal;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #cbcbcb;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .sidebar .active {
+            background-color: #556270;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .hamburger {
+            font-size: 24px;
+            cursor: pointer;
+            color: #303942;
+            margin-right: 15px;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #303942;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 15px;
+            padding-top: 70px;
+            transition: 0.5s;
+        }
+
+        .content h1 {
+            text-align: center;
+            color: #303942;
+            margin-top: 50px;
+        }
+
+        .content img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .content p {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 16px;
+            color: #8c8c8c;
+        }
+
+        /* Footer Styling */
+        .footer {
+            background-color: #e0e0e0;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 250px);
+            left: 250px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+        }
+
+        .footer .copyright {
+            margin: 0;
+            font-size: 14px;
+            color: #303942;
+        }
+
+        /* Responsive and Sidebar Toggle */
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 0;
+            }
+
+            .navbar {
+                left: 0;
+                width: 100%;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .footer {
+                width: 100%;
+                left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="mySidebar">
+        <div class="logo">
+            <img src="src/logo-owl.png" alt="Logo">
+            <span class="logo-text" style="color: white;"><b>Reconnaissance</b></span>
+        </div>
+        <a href="pages/search.html">Search Engine</a>
+        <a href="#">Facebook</a>
+        <a href="#">Twitter</a>
+        <a href="#">Instagram</a>
+        <a href="#">Linkedin</a>
+        <a href="#">Comunities</a>
+        <a href="#">Email Address</a>
+        <a href="#">Usernames</a>
+        <a href="#">Name</a>
+        <a href="#">Documents</a>
+        <a href="#">Pastes</a>
+        <a href="#">Image</a>
+        <a href="#">Domain</a>
+        <a href="#">IP Address</a>
+        <a href="#">Vehicles</a>
+        <a href="#">Data Breach & Leaks</a>
+        <a href="#">Documents</a>
+        <a href="#">Mahkamah Agung</a>
+        <a href="#">Pendidikan</a>
+        <a href="#">Goverments</a>
+        <a href="#">Bussniess</a>
+        <a href="#">OSINT Flow charts</a>
+    </div>
+
+    <!-- Navbar -->
+    <div class="navbar" id="myNavbar">
+        <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
+        <h1><a href="index.html" style="text-decoration: none; color: inherit;">OSINT Dashboard</a></h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="myContent">
+        <h1>OSINT Dashboard</h1>
+        <img src="src/spy.png" alt="Logo">
+        <p>Selamat datang di osint tools sederhana saya.</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p class="copyright">&copy; 2024 Dika Maulidal. All Rights Reserved.</p>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById("mySidebar");
+            var navbar = document.getElementById("myNavbar");
+            var content = document.getElementById("myContent");
+            var footer = document.querySelector(".footer");
+
+            if (sidebar.style.width === "0px" || sidebar.style.width === "") {
+                sidebar.style.width = "250px";
+                navbar.style.left = "250px";
+                navbar.style.width = "calc(100% - 250px)";
+                content.style.marginLeft = "250px";
+                footer.style.width = "calc(100% - 250px)";
+                footer.style.left = "250px";
+            } else {
+                sidebar.style.width = "0";
+                navbar.style.left = "0";
+                navbar.style.width = "100%";
+                content.style.marginLeft = "0";
+                footer.style.width = "100%";
+                footer.style.left = "0";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
