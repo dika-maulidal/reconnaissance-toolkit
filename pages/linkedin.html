@@ -147,7 +147,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
+            max-width: 400px;
             margin: 20px auto 20px 0;
             /* Auto pada kanan agar card tidak berada di tengah */
         }
@@ -162,7 +162,7 @@
 
         /* Form Styling */
         .card form {
-            display: flex;
+            /* display: flex; */
             flex-direction: row;
             justify-content: space-between;
             align-items: center;
@@ -263,10 +263,10 @@
         <a href="twitter.html">
             <i class="fa-brands fa-twitter"></i> Twitter
         </a>
-        <a href="instagram.html" class="active">
+        <a href="instagram.html">
             <i class="fa-brands fa-instagram"></i> Instagram
         </a>
-        <a href="linkedin.html">
+        <a href="linkedin.html" class="active">
             <i class="fa-brands fa-linkedin"></i> Linkedin
         </a>
         <a href="communities.html">
@@ -330,183 +330,229 @@
     <!-- Main Content -->
     <div class="content" id="myContent">
         <div class="card">
-            <h2 style="font-size: 18px; text-align: left;">Instagram Search Tools</h2>
+            <h2 style="font-size: 18px; text-align: left;">Linkedin Search Tools</h2>
             <div class="card-body">
-                <form onsubmit="doPopAll(this.PopAll.value); return false;">
-                    <input type="text" id="PopAll" name="PopAll" size="30" placeholder="Search Terms" />
-                    <input type="submit" value="Populate All" />
-                </form>
-                <br><br>
-
                 <script type="text/javascript">
-                    function doSearch01(Search01) {
-                        window.open('http://instagram.com/' + Search01, 'Search01window');
+                    function doSearch01(keyword, fname, lname, title, company, school) {
+                        window.open('https://www.linkedin.com/search/results/people/?keywords=' + keyword +
+                            '&firstName=' + fname + '&lastName=' + lname + '&title=' + title + '&company=' +
+                            company + '&school=' + school, 'Search01window');
                     }
                 </script>
-                <form onsubmit="doSearch01(this.Search01.value); return false;">
-                    <input type="text" id="Search01" name="Search01" size="30" placeholder="Username" />
-                    <input type="submit" value="IG Profile" /></form><br>
+                <form
+                    onsubmit="doSearch01(this.keyword.value, this.fname.value, this.lname.value, this.title.value, this.company.value, this.school.value); return false;">
+                    <input type="text" name="fname" size="20" placeholder="First Name" />
+                    <input type="text" name="lname" size="20" placeholder="Last Name" /><br>
+                    <input type="text" name="keyword" size="20" placeholder="Keyword" />
+                    <input type="text" name="title" size="20" placeholder="Title" /><br>
+                    <input type="text" name="company" size="20" placeholder="Company" />
+                    <input type="text" name="school" size="20" placeholder="School" /><br>
+                    <input type="submit" style="width:140px" Value="Person Search" /><br><br>
+                </form><br>
 
                 <script type="text/javascript">
-                    function doSearch02(Search02) {
-                        window.open('http://instagram.com/' + Search02 + '/channel/', 'Search02window');
+                    function doSearch02(keyword, title) {
+                        window.open('https://www.linkedin.com/search/results/content/?authorJobTitle=%22' + title +
+                            '%22&keywords=' + keyword, 'Search02window');
                     }
                 </script>
-                <form onsubmit="doSearch02(this.Search02.value); return false;">
-                    <input type="text" id="Search02" name="Search02" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="IG Channel" /></form><br>
+                <form onsubmit="doSearch02(this.keyword.value, this.title.value); return false;">
+                    <input type="text" name="keyword" size="20" placeholder="Keyword" />
+                    <input type="text" name="title" size="20" placeholder="Title" /><br>
+                    <input type="submit" style="width:140px" Value="Post Search" /><br><br>
+                </form><br>
 
                 <script type="text/javascript">
-                    function doSearch03(Search03) {
-                        window.open('https://instagram.com/' + Search03 + '/tagged/', 'Search03window');
+                    function doSearch03(keyword, fname, lname, title, school, company) {
+                        window.open('https://www.google.com/search?q=site%3Awww.linkedin.com+' + keyword + '+' + fname +
+                            '+' + lname + '+' + title + '+' + company + '+' + school, 'Search03window');
                     }
                 </script>
-                <form onsubmit="doSearch03(this.Search03.value); return false;">
-                    <input type="text" id="Search03" name="Search03" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="IG Tagged" /></form><br>
+                <form
+                    onsubmit="doSearch03(this.keyword.value, this.fname.value, this.lname.value, this.title.value, this.company.value, this.school.value); return false;">
+                    <input type="text" name="fname" size="20" placeholder="First Name" />
+                    <input type="text" name="lname" size="20" placeholder="Last Name" /><br>
+                    <input type="text" name="keyword" size="20" placeholder="Keyword" />
+                    <input type="text" name="title" size="20" placeholder="Title" /><br>
+                    <input type="text" name="company" size="20" placeholder="Company" />
+                    <input type="text" name="school" size="20" placeholder="School" /><br>
+                    <input type="submit" style="width:140px" Value="Google Search" /><br><br>
+                </form><br>
 
                 <script type="text/javascript">
-                    function doSearch04(Search04) {
-                        window.open('https://www.google.com/search?q=site%3Ainstagram.com+"' + Search04 + '%22',
-                            'Search04window');
+                    function doSearch04(keyword, fname, lname, title, school, company) {
+                        window.open('https://www.bing.com/search?q=site%3Alinkedin.com+' + keyword + '+' + fname + '+' +
+                            lname + '+' + title + '+' + company + '+' + school, 'Search04window');
                     }
                 </script>
-                <form onsubmit="doSearch04(this.Search04.value); return false;">
-                    <input type="text" id="Search04" name="Search04" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Outgoing Search" /></form><br>
+                <form
+                    onsubmit="doSearch04(this.keyword.value, this.fname.value, this.lname.value, this.title.value, this.company.value, this.school.value); return false;">
+                    <input type="text" name="fname" size="20" placeholder="First Name" />
+                    <input type="text" name="lname" size="20" placeholder="Last Name" /><br>
+                    <input type="text" name="keyword" size="20" placeholder="Keyword" />
+                    <input type="text" name="title" size="20" placeholder="Title" /><br>
+                    <input type="text" name="company" size="20" placeholder="Company" />
+                    <input type="text" name="school" size="20" placeholder="School" /><br>
+                    <input type="submit" style="width:140px" Value="Bing Search" /><br><br>
+                </form><br>
 
                 <script type="text/javascript">
-                    function doSearch05(Search05) {
-                        window.open('https://www.google.com/search?q=site%3Ainstagram.com+"@' + Search05 + '"',
-                            'Search05window');
+                    function doSearch05(keyword, fname, lname, title, school, company) {
+                        window.open('https://www.yandex.com/search/?text=site%3Alinkedin.com' + '+' + keyword + '+' +
+                            fname + '+' + lname + '+' + title + '+' + company + '+' + school, 'Search05window');
                     }
                 </script>
-                <form onsubmit="doSearch05(this.Search05.value); return false;">
-                    <input type="text" id="Search05" name="Search05" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Incoming Search" /></form><br>
+                <form
+                    onsubmit="doSearch05(this.keyword.value, this.fname.value, this.lname.value, this.title.value, this.company.value, this.school.value); return false;">
+                    <input type="text" name="fname" size="20" placeholder="First Name" />
+                    <input type="text" name="lname" size="20" placeholder="Last Name" /><br>
+                    <input type="text" name="keyword" size="20" placeholder="Keyword" />
+                    <input type="text" name="title" size="20" placeholder="Title" /><br>
+                    <input type="text" name="company" size="20" placeholder="Company" />
+                    <input type="text" name="school" size="20" placeholder="School" /><br>
+                    <input type="submit" style="width:140px" Value="Yandex Search" /><br><br>
+                </form><br>
 
                 <script type="text/javascript">
-                    function doSearch06(Search06) {
-                        window.open('https://www.bing.com/search?q=site%3Ainstagram.com+"' + Search06 + '"',
+                    function doSearch06(keyword) {
+                        window.open('https://www.linkedin.com/search/results/companies/?keywords=' + keyword,
                             'Search06window');
                     }
                 </script>
-                <form onsubmit="doSearch06(this.Search06.value); return false;">
-                    <input type="text" id="Search06" name="Search06" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Bing Search" /></form><br>
+                <form onsubmit="doSearch06(this.keyword.value); return false;">
+                    <input type="text" name="keyword" size="30" placeholder="Keyword" />
+                    <input type="submit" style="width:140px" Value="Company Search" />
+                </form><br>
 
                 <script type="text/javascript">
-                    function doSearch07(Search07) {
-                        window.open('https://yandex.com/search/?text=site%3Ainstagram.com+"' + Search07 + '"',
+                    function doSearch07(keyword) {
+                        window.open('https://www.linkedin.com/search/results/groups/?keywords=' + keyword,
                             'Search07window');
                     }
                 </script>
-                <form onsubmit="doSearch07(this.Search07.value); return false;">
-                    <input type="text" id="Search07" name="Search07" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Yandex Search" /></form><br>
+                <form onsubmit="doSearch07(this.keyword.value); return false;">
+                    <input type="text" name="keyword" size="30" placeholder="Keyword" />
+                    <input type="submit" style="width:140px" Value="Group Search" />
+                </form><br>
 
                 <script type="text/javascript">
-                    function doSearch08(Search08) {
-                        window.open('https://www.google.com/search?q=site%3Atwitter.com+“' + Search08 +
-                            '”+“instagram.com%2Fp”', 'Search08window');
+                    function doSearch08(keyword) {
+                        window.open('https://www.linkedin.com/search/results/schools/?keywords=' + keyword,
+                            'Search08window');
                     }
                 </script>
-                <form onsubmit="doSearch08(this.Search08.value); return false;">
-                    <input type="text" id="Search08" name="Search08" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Twitter Posts" /></form><br>
+                <form onsubmit="doSearch08(this.keyword.value); return false;">
+                    <input type="text" name="keyword" size="30" placeholder="Keyword" />
+                    <input type="submit" style="width:140px" Value="School Search" />
+                </form><br>
 
                 <script type="text/javascript">
-                    function doSearch09(Search09) {
-                        window.open('https://dumpor.com/v/' + Search09, 'Search09window');
+                    function doSearch09(keyword) {
+                        window.open('https://www.linkedin.com/search/results/events/?keywords=' + keyword,
+                            'Search09window');
                     }
                 </script>
-                <form onsubmit="doSearch09(this.Search09.value); return false;">
-                    <input type="text" id="Search09" name="Search09" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Dumpor Profile" /></form><br>
+                <form onsubmit="doSearch09(this.keyword.value); return false;">
+                    <input type="text" name="keyword" size="30" placeholder="Keyword" />
+                    <input type="submit" style="width:140px" Value="Event Search" />
+                </form><br>
 
                 <script type="text/javascript">
-                    function doSearch17(Search17) {
-                        window.open('https://toolzu.com/profile-analyzer/instagram/?username=' + Search17,
-                            'Search17window');
+                    function doSearch10(keyword) {
+                        window.open('https://www.linkedin.com/jobs/index/?keywords=' + keyword, 'Search10window');
                     }
                 </script>
-                <form onsubmit="doSearch17(this.Search17.value); return false;">
-                    <input type="text" id="Search17" name="Search17" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Toolzu Profile" /></form><br>
-
-                <script type="text/javascript">
-                    function doSearch10(Search10) {
-                        window.open(
-                            'https://www.instagram.com/graphql/query/?query_hash=c76146de99bb02f6415203be841dd25a&variables={%22id%22:%22' +
-                            Search10 + '%22,%22include_reel%22:true,%22fetch_mutual%22:true,%22first%22:50}',
-                            'Search10window');
-                    }
-                </script>
-                <form onsubmit="doSearch10(this.Search10.value); return false;">
-                    <input type="text" id="Search10" name="Search10" size="30" placeholder="IG User ID" value="" />
-                    <input type="submit" value="Followers" /></form><br>
+                <form onsubmit="doSearch10(this.keyword.value); return false;">
+                    <input type="text" name="keyword" size="30" placeholder="Keyword" />
+                    <input type="submit" style="width:140px" Value="Job Search" />
+                </form><br><br>
 
                 <script type="text/javascript">
                     function doSearch11(Search11) {
-                        window.open(
-                            'https://www.instagram.com/graphql/query/?query_hash=d04b0a864b4b54837c0d870b0e77e076&variables={%22id%22:%22' +
-                            Search11 + '%22,%22include_reel%22:true,%22fetch_mutual%22:false,%22first%22:50}',
-                            'Search11window');
+                        window.open('http://www.linkedin.com/in/' + Search11, 'Search11window');
                     }
                 </script>
                 <form onsubmit="doSearch11(this.Search11.value); return false;">
-                    <input type="text" id="Search11" name="Search11" size="30" placeholder="IG User ID" value="" />
-                    <input type="submit" value="Following" /></form><br><br>
-                <script type="text/javascript">
-                    function doSearch12(Search12, Search12b) {
-                        window.open('https://www.google.com/search?&q=site%3Ainstagram.com+“' + Search12 + '”+“' +
-                            Search12b + '”', 'Search12window');
-                    }
-                </script>
-                <form onsubmit="doSearch12(this.Search12.value,this.Search12b.value); return false;">
-                    <input type="text" id="Search12" name="Search12" size="15" placeholder="Username" value="" />
-                    <input type="text" name="Search12b" size="15" placeholder="Search Terms" value="" />
-                    <input type="submit" value="User + Term" /></form><br>
+                    <input type="text" name="Search11" size="30" placeholder="Username" />
+                    <input type="submit" style="width:140px" value="Profile" /><br></form><br>
 
                 <script type="text/javascript">
-                    function doSearch13(Search13, Search13b) {
-                        window.open('https://www.google.com/search?&q=site%3Ainstagram.com+“' + Search13 + '”+“' +
-                            Search13b + '”', 'Search13window');
+                    function doSearch12(Search12) {
+                        window.open('https://search.google.com/test/mobile-friendly?url=http://linkedin.com/in/' +
+                            Search12, 'Search12window');
                     }
                 </script>
-                <form onsubmit="doSearch13(this.Search13.value,this.Search13b.value); return false;">
-                    <input type="text" id="Search13" name="Search13" size="15" placeholder="Username" value="" />
-                    <input type="text" name="Search13b" size="15" placeholder="Username" value="" />
-                    <input type="submit" value="Associations" /></form><br><br>
+                <form onsubmit="doSearch12(this.Search12.value); return false;">
+                    <input type="text" name="Search12" size="30" placeholder="Username" />
+                    <input type="submit" style="width:140px" value="Mobile Profile" /><br></form><br>
 
+                <script type="text/javascript">
+                    function doSearch13(Search13) {
+                        window.open('https://www.google.com/search?q=site:linkedin.com+' + Search13 +
+                            '&source=lnms&tbm=isch', 'Search13window');
+                    }
+                </script>
+                <form onsubmit="doSearch13(this.Search13.value); return false;">
+                    <input type="text" name="Search13" size="30" placeholder="Username or Real Name" value="" />
+                    <input type="submit" style="width:140px" value="Google Photos" /><br></form><br>
 
                 <script type="text/javascript">
                     function doSearch14(Search14) {
-                        window.open('https://www.instagram.com/explore/tags/' + Search14, 'Search14window');
+                        window.open('https://www.bing.com/images/search?q=site%3alinkedin.com+' + Search14 +
+                            '&scenario=ImageBasicHover', 'Search14window');
                     }
                 </script>
                 <form onsubmit="doSearch14(this.Search14.value); return false;">
-                    <input type="text" name="Search14" size="30" placeholder="Search Terms" value="" />
-                    <input type="submit" value="IG Hashtags" /></form><br>
+                    <input type="text" name="Search14" size="30" placeholder="Username or Real Name" value="" />
+                    <input type="submit" style="width:140px" value="Bing Photos" /><br></form><br>
 
                 <script type="text/javascript">
                     function doSearch15(Search15) {
-                        window.open('https://www.google.com/search?&q=site%3Ainstagram.com+' + Search15,
+                        window.open('https://www.google.com/search?q=site:linkedin.com+' + Search15 + '&tbm=vid',
                             'Search15window');
                     }
                 </script>
                 <form onsubmit="doSearch15(this.Search15.value); return false;">
                     <input type="text" name="Search15" size="30" placeholder="Search Terms" value="" />
-                    <input type="submit" value="IG Terms" /></form><br>
+                    <input type="submit" style="width:140px" value="Videos" /><br></form><br>
 
                 <script type="text/javascript">
-                    function doSearch16(Search16) {
-                        window.open('https://dumpor.com/t/' + Search16, 'Search16window');
+                    // Script source: https://ollie-boyd.github.io/Linkedin-post-timestamp-extractor/.
+                    function getPostId() {
+                        const linkedinURL = document.querySelector("#url").value;
+                        const regex = /([0-9]{19})/;
+                        const postId = regex.exec(linkedinURL).pop();
+                        return postId;
+                    }
+
+                    function extractUnixTimestamp(postId) {
+                        const asBinary = BigInt(postId).toString(2);
+                        const first41Chars = asBinary.slice(0, 41);
+                        const timestamp = parseInt(first41Chars, 2);
+                        return timestamp;
+                    }
+
+                    function unixTimestampToHumanDate(timestamp) {
+                        const dateObject = new Date(timestamp);
+                        const humanDateFormat = dateObject.toUTCString() + " (UTC)";
+                        return humanDateFormat;
+                    }
+
+                    function getDate() {
+                        const postId = getPostId();
+                        const unixTimestamp = extractUnixTimestamp(postId);
+                        const humanDateFormat = unixTimestampToHumanDate(unixTimestamp);
+                        document.querySelector("#date").textContent = humanDateFormat;
                     }
                 </script>
-                <form onsubmit="doSearch16(this.Search16.value); return false;">
-                    <input type="text" name="Search16" size="30" placeholder="Hashtag" value="" />
-                    <input type="submit" value="Dumpor Tag" /></form><br>
+                <div class="form">
+                    <input type="text" size="30" placeholder="Post URL" id="url" name="url" />
+                    <button onclick="getDate()" style="width:140px">Timestamp</button>
+                </div>
+                <div class="output"><br>
+                    <span id="label">Date: </span>
+                    <span id="date"></span>
+                </div>
             </div>
         </div>
 

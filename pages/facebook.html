@@ -142,27 +142,6 @@
             color: #303942;
         }
 
-        /* Responsive and Sidebar Toggle */
-        @media screen and (max-width: 768px) {
-            .sidebar {
-                width: 0;
-            }
-
-            .navbar {
-                left: 0;
-                width: 100%;
-            }
-
-            .content {
-                margin-left: 0;
-            }
-
-            .footer {
-                width: 100%;
-                left: 0;
-            }
-        }
-
         .card {
             background-color: #fff;
             padding: 20px;
@@ -214,6 +193,40 @@
             background-color: #556270;
         }
 
+        @media screen and (max-width: 768px) {
+            .card form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .card input[type="text"] {
+                margin-bottom: 1px;
+                width: 100%;
+            }
+
+            .card input[type="submit"] {
+                width: 50%;
+            }
+
+            .sidebar {
+                width: 0;
+            }
+
+            .navbar {
+                left: 0;
+                width: 100%;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .footer {
+                width: 100%;
+                left: 0;
+            }
+        }
+
         .card button {
             padding: 10px;
             font-size: 16px;
@@ -253,13 +266,13 @@
         <a href="instagram.html">
             <i class="fa-brands fa-instagram"></i> Instagram
         </a>
-        <a href="#">
+        <a href="linkedin.html">
             <i class="fa-brands fa-linkedin"></i> Linkedin
         </a>
-        <a href="#">
+        <a href="communities.html">
             <i class="fa-solid fa-comments"></i> Comunities
         </a>
-        <a href="#">
+        <a href="email.html">
             <i class="fa-solid fa-envelope"></i> Email Address
         </a>
         <a href="#">
