@@ -263,7 +263,7 @@
         <a href="twitter.html">
             <i class="fa-brands fa-twitter"></i> Twitter
         </a>
-        <a href="instagram.html" class="active">
+        <a href="instagram.html">
             <i class="fa-brands fa-instagram"></i> Instagram
         </a>
         <a href="linkedin.html">
@@ -290,7 +290,7 @@
         <a href="#">
             <i class="fa-solid fa-folder"></i> Pastes
         </a>
-        <a href="images.html">
+        <a href="images.html" class="active">
             <i class="fa-solid fa-image"></i> Image
         </a>
         <a href="domain.html">
@@ -330,203 +330,206 @@
     <!-- Main Content -->
     <div class="content" id="myContent">
         <div class="card">
-            <h2 style="font-size: 18px; text-align: left;">Instagram Search Tools</h2>
+            <h2 style="font-size: 18px; text-align: left;">Images Search Tools</h2>
             <div class="card-body">
-                <form onsubmit="doPopAll(this.PopAll.value); return false;">
-                    <input type="text" id="PopAll" name="PopAll" size="30" placeholder="Search Terms" />
-                    <input type="submit" value="Populate All" />
-                </form>
-                <br><br>
-
+                Reverse Image Search: <br><br>
                 <script type="text/javascript">
                     function doSearch01(Search01) {
-                        window.open('http://instagram.com/' + Search01, 'Search01window');
+                        window.open('https://lens.google.com/uploadbyurl?url=' + Search01, 'Search01window');
                     }
                 </script>
                 <form onsubmit="doSearch01(this.Search01.value); return false;">
-                    <input type="text" id="Search01" name="Search01" size="30" placeholder="Username" />
-                    <input type="submit" value="IG Profile" /></form><br>
+                    <input type="text" name="Search01" size="30" placeholder="Entire Image URL" />
+                    <input type="submit" value="Google Lens" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch02(Search02) {
-                        window.open('http://instagram.com/' + Search02 + '/channel/', 'Search02window');
+                        window.open('https://www.bing.com/images/search?view=detailv2&iss=sbi&q=imgurl:' + Search02,
+                            'Search02window');
                     }
                 </script>
                 <form onsubmit="doSearch02(this.Search02.value); return false;">
-                    <input type="text" id="Search02" name="Search02" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="IG Channel" /></form><br>
+                    <input type="text" name="Search02" size="30" placeholder="Entire Image URL" />
+                    <input type="submit" value="Bing" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch03(Search03) {
-                        window.open('https://instagram.com/' + Search03 + '/tagged/', 'Search03window');
+                        window.open('http://www.tineye.com/search/?url=' + Search03, 'Search03window');
                     }
                 </script>
                 <form onsubmit="doSearch03(this.Search03.value); return false;">
-                    <input type="text" id="Search03" name="Search03" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="IG Tagged" /></form><br>
+                    <input type="text" name="Search03" size="30" placeholder="Entire Image URL" />
+                    <input type="submit" value="TinEye" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch04(Search04) {
-                        window.open('https://www.google.com/search?q=site%3Ainstagram.com+"' + Search04 + '%22',
-                            'Search04window');
+                        window.open('https://yandex.com/images/search?rpt=imageview&url=' + Search04, 'Search04window');
                     }
                 </script>
                 <form onsubmit="doSearch04(this.Search04.value); return false;">
-                    <input type="text" id="Search04" name="Search04" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Outgoing Search" /></form><br>
+                    <input type="text" name="Search04" size="30" placeholder="Entire Image URL" />
+                    <input type="submit" value="Yandex" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch05(Search05) {
-                        window.open('https://www.google.com/search?q=site%3Ainstagram.com+"@' + Search05 + '"',
-                            'Search05window');
+                        window.open('https://facecheck.id/#url=' + Search05, 'Search05window');
                     }
                 </script>
                 <form onsubmit="doSearch05(this.Search05.value); return false;">
-                    <input type="text" id="Search05" name="Search05" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Incoming Search" /></form><br>
+                    <input type="text" name="Search05" size="30" placeholder="Entire Image URL" />
+                    <input type="submit" value="FaceCheck" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch06(Search06) {
-                        window.open('https://www.bing.com/search?q=site%3Ainstagram.com+"' + Search06 + '"',
-                            'Search06window');
+                        window.open('https://www.repostsleuth.com/search?url=' + Search06, 'Search06window');
                     }
                 </script>
                 <form onsubmit="doSearch06(this.Search06.value); return false;">
-                    <input type="text" id="Search06" name="Search06" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Bing Search" /></form><br>
+                    <input type="text" name="Search06" size="30" placeholder="Entire Image URL" />
+                    <input type="submit" value="Repost Sleuth" /></form><br><br>
+
+                <script type="text/javascript">
+                    function doimage(image) {
+                        window.open('https://www.google.com/searchbyimage?site=search&sa=X&image_url=' + image,
+                            'image1window');
+                        window.open('https://www.bing.com/images/search?view=detailv2&iss=sbi&q=imgurl:' + image,
+                            'image2window');
+                        window.open('http://www.tineye.com/search/?url=' + image, 'image3window');
+                        window.open('https://yandex.com/images/search?rpt=imageview&url=' + image, 'image4window');
+                        window.open('https://facecheck.id/#url=' + image, 'image5window');
+                        window.open('https://www.repostsleuth.com/search?url=' + image, 'image6window');
+                    }
+                </script>
+                <form onsubmit="doimage(this.image.value); return false;">
+                    <input type="text" name="image" size="30" placeholder="Entire Image URL" />
+                    <input type="submit" value="Submit All" /></form><br><br>
+
+                Images Search: <br><br>
+
+                <script type="text/javascript">
+                    function doPopAll(PopAll) {
+                        var pop = document.getElementById("PopAll");
+                        for (j = 1; j <= 100; j++) {
+                            if (j < 10) {
+                                j = "0" + j.toString();
+                            } else {
+                                j = j.toString();
+                            }
+                            console.log(j)
+                            item = document.getElementById("Search" + j);
+                            if (item != null) {
+                                item.value = pop.value;
+                            }
+                        }
+                    }
+                </script>
+                <form onsubmit="doPopAll(this.PopAll.value); return false;">
+                    <input type="text" id="PopAll" name="PopAll" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Populate All" /></form><br><br>
 
                 <script type="text/javascript">
                     function doSearch07(Search07) {
-                        window.open('https://yandex.com/search/?text=site%3Ainstagram.com+"' + Search07 + '"',
-                            'Search07window');
+                        window.open('https://www.google.com/search?q=' + Search07 + '&tbm=isch', 'Search07window');
                     }
                 </script>
                 <form onsubmit="doSearch07(this.Search07.value); return false;">
-                    <input type="text" id="Search07" name="Search07" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Yandex Search" /></form><br>
+                    <input type="text" id="Search07" name="Search07" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Google Images" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch08(Search08) {
-                        window.open('https://www.google.com/search?q=site%3Atwitter.com+“' + Search08 +
-                            '”+“instagram.com%2Fp”', 'Search08window');
+                        window.open('https://www.bing.com/images/search?q=' + Search08, 'Search08window');
                     }
                 </script>
                 <form onsubmit="doSearch08(this.Search08.value); return false;">
-                    <input type="text" id="Search08" name="Search08" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Twitter Posts" /></form><br>
+                    <input type="text" id="Search08" name="Search08" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Bing Images" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch09(Search09) {
-                        window.open('https://dumpor.com/v/' + Search09, 'Search09window');
+                        window.open('https://yandex.com/images/search?text=' + Search09, 'Search09window');
                     }
                 </script>
                 <form onsubmit="doSearch09(this.Search09.value); return false;">
-                    <input type="text" id="Search09" name="Search09" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Dumpor Profile" /></form><br>
-
-                <script type="text/javascript">
-                    function doSearch17(Search17) {
-                        window.open('https://toolzu.com/profile-analyzer/instagram/?username=' + Search17,
-                            'Search17window');
-                    }
-                </script>
-                <form onsubmit="doSearch17(this.Search17.value); return false;">
-                    <input type="text" id="Search17" name="Search17" size="30" placeholder="Username" value="" />
-                    <input type="submit" value="Toolzu Profile" /></form><br>
+                    <input type="text" id="Search09" name="Search09" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Yandex Images" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch10(Search10) {
-                        window.open(
-                            'https://www.instagram.com/graphql/query/?query_hash=c76146de99bb02f6415203be841dd25a&variables={%22id%22:%22' +
-                            Search10 + '%22,%22include_reel%22:true,%22fetch_mutual%22:true,%22first%22:50}',
-                            'Search10window');
+                        window.open('https://twitter.com/search?q=' + Search10 + '&f=image', 'Search10window');
                     }
                 </script>
                 <form onsubmit="doSearch10(this.Search10.value); return false;">
-                    <input type="text" id="Search10" name="Search10" size="30" placeholder="IG User ID" value="" />
-                    <input type="submit" value="Followers" /></form><br>
+                    <input type="text" id="Search10" name="Search10" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Twitter Images" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch11(Search11) {
-                        window.open(
-                            'https://www.instagram.com/graphql/query/?query_hash=d04b0a864b4b54837c0d870b0e77e076&variables={%22id%22:%22' +
-                            Search11 + '%22,%22include_reel%22:true,%22fetch_mutual%22:false,%22first%22:50}',
-                            'Search11window');
+                        window.open('https://www.facebook.com/search/photos/?q=' + Search11, 'Search11window');
                     }
                 </script>
                 <form onsubmit="doSearch11(this.Search11.value); return false;">
-                    <input type="text" id="Search11" name="Search11" size="30" placeholder="IG User ID" value="" />
-                    <input type="submit" value="Following" /></form><br><br>
-                <script type="text/javascript">
-                    function doSearch12(Search12, Search12b) {
-                        window.open('https://www.google.com/search?&q=site%3Ainstagram.com+“' + Search12 + '”+“' +
-                            Search12b + '”', 'Search12window');
-                    }
-                </script>
-                <form onsubmit="doSearch12(this.Search12.value,this.Search12b.value); return false;">
-                    <input type="text" id="Search12" name="Search12" size="15" placeholder="Username" value="" />
-                    <input type="text" name="Search12b" size="15" placeholder="Search Terms" value="" />
-                    <input type="submit" value="User + Term" /></form><br>
+                    <input type="text" id="Search11" name="Search11" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Facebook Images" /></form><br>
 
                 <script type="text/javascript">
-                    function doSearch13(Search13, Search13b) {
-                        window.open('https://www.google.com/search?&q=site%3Ainstagram.com+“' + Search13 + '”+“' +
-                            Search13b + '”', 'Search13window');
+                    function doSearch12(Search12) {
+                        window.open('https://www.google.com/search?tbm=isch&q=site%3Ainstagram.com+' + Search12,
+                            'Search12window');
                     }
                 </script>
-                <form onsubmit="doSearch13(this.Search13.value,this.Search13b.value); return false;">
-                    <input type="text" id="Search13" name="Search13" size="15" placeholder="Username" value="" />
-                    <input type="text" name="Search13b" size="15" placeholder="Username" value="" />
-                    <input type="submit" value="Associations" /></form><br><br>
+                <form onsubmit="doSearch12(this.Search12.value); return false;">
+                    <input type="text" id="Search12" name="Search12" size="30" placeholder="Search Terms" value="" />
+                    <input type="submit" value="Instagram Images" /></form><br>
 
+                <script type="text/javascript">
+                    function doSearch13(Search13) {
+                        window.open('https://www.google.com/search?tbm=isch&q=site%3Alinkedin.com+' + Search13,
+                            'Search13window');
+                    }
+                </script>
+                <form onsubmit="doSearch13(this.Search13.value); return false;">
+                    <input type="text" id="Search13" name="Search13" size="30" placeholder="Search Terms" value="" />
+                    <input type="submit" value="LinkedIn Images" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch14(Search14) {
-                        window.open('https://www.instagram.com/explore/tags/' + Search14, 'Search14window');
+                        window.open('https://www.flickr.com/search/?text=' + Search14, 'Search14window');
                     }
                 </script>
                 <form onsubmit="doSearch14(this.Search14.value); return false;">
-                    <input type="text" name="Search14" size="30" placeholder="Search Terms" value="" />
-                    <input type="submit" value="IG Hashtags" /></form><br>
+                    <input type="text" id="Search14" name="Search14" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Flickr Images" /></form><br>
 
                 <script type="text/javascript">
                     function doSearch15(Search15) {
-                        window.open('https://www.google.com/search?&q=site%3Ainstagram.com+' + Search15,
-                            'Search15window');
+                        window.open('https://www.tumblr.com/search/' + Search15, 'Search15window');
                     }
                 </script>
                 <form onsubmit="doSearch15(this.Search15.value); return false;">
-                    <input type="text" name="Search15" size="30" placeholder="Search Terms" value="" />
-                    <input type="submit" value="IG Terms" /></form><br>
+                    <input type="text" id="Search15" name="Search15" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Tumblr Images" /></form><br><br>
 
                 <script type="text/javascript">
                     function doSearch16(Search16) {
-                        window.open('https://dumpor.com/t/' + Search16, 'Search16window');
+                        window.open('https://www.google.com/search?q=' + Search16 + '&tbm=isch', 'image1window');
+                        window.open('https://www.bing.com/images/search?q=' + Search16, 'image2window');
+                        window.open('https://yandex.com/images/search?text=' + Search16, 'image3window');
+                        window.open('https://twitter.com/search?f=image&q=' + Search16, 'image4window');
+                        window.open('https://www.facebook.com/search/photos/?q=' + Search16, 'image5window');
+                        window.open('https://www.google.com/search?tbm=isch&q=site%3Ainstagram.com+' + Search16,
+                            'image6window');
+                        window.open('https://www.google.com/search?tbm=isch&q=site%3Alinkedin.com+' + Search16,
+                            'image7window');
+                        window.open('https://www.flickr.com/search/?text=' + Search16, 'image8window');
+                        window.open('https://www.tumblr.com/search/' + Search16, 'Search9window');
                     }
                 </script>
                 <form onsubmit="doSearch16(this.Search16.value); return false;">
-                    <input type="text" name="Search16" size="30" placeholder="Hashtag" value="" />
-                    <input type="submit" value="Dumpor Tag" /></form><br>
+                    <input type="text" id="Search16" name="Search16" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Submit All" /></form><br><br>
             </div>
         </div>
-
-        <script type="text/javascript">
-            function doPopAll(PopAll) {
-                var pop = document.getElementById("PopAll");
-                for (j = 1; j <= 100; j++) {
-                    if (j < 10) {
-                        j = "0" + j.toString();
-                    } else {
-                        j = j.toString();
-                    }
-                    console.log(j)
-                    item = document.getElementById("Search" + j);
-                    if (item != null) {
-                        item.value = pop.value;
-                    }
-                }
-            }
-        </script>
     </div>
 
     <!-- Footer -->

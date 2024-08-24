@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f6fa;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #303942;
+            overflow-x: hidden;
+            padding-top: 5px;
+            transition: 0.5s;
+        }
+
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .logo img {
+            width: 70px;
+            height: auto;
+        }
+
+        .sidebar .logo-text {
+            font-size: 16px;
+            color: #cbcbcb;
+            font-weight: normal;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #9f9f9f;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #c2c2c2;
+            /* text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); */
+        }
+
+        .sidebar .active {
+            background-color: #556270;
+        }
+
+        .sidebar a.active {
+            background-color: transparent;
+            color: #ffffff;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .hamburger {
+            font-size: 24px;
+            cursor: pointer;
+            color: #303942;
+            margin-right: 15px;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #303942;
+        }
+
+        .content {
+            margin-left: 270px;
+            /* 250px (sidebar width) + 20px (desired margin) */
+            padding: 15px;
+            padding-top: 70px;
+            transition: 0.5s;
+        }
+
+        .content h1 {
+            text-align: center;
+            color: #303942;
+            margin-top: 50px;
+        }
+
+        .content img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .content p {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 16px;
+            color: #8c8c8c;
+        }
+
+        /* Footer Styling */
+        .footer {
+            background-color: #fbfbfbd8;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 250px);
+            left: 250px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+        }
+
+        .footer .copyright {
+            margin: 0;
+            font-size: 14px;
+            color: #303942;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto 20px 0;
+            /* Auto pada kanan agar card tidak berada di tengah */
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #303942;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Form Styling */
+        .card form {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: -6px 0;
+        }
+
+        .card input[type="text"] {
+            flex-grow: 1;
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .card input[type="submit"] {
+            padding: 5px 15px;
+            font-size: 14px;
+            background-color: #303942;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card input[type="submit"]:hover {
+            background-color: #556270;
+        }
+
+        @media screen and (max-width: 768px) {
+            .card form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .card input[type="text"] {
+                margin-bottom: 1px;
+                width: 100%;
+            }
+
+            .card input[type="submit"] {
+                width: 50%;
+            }
+
+            .sidebar {
+                width: 0;
+            }
+
+            .navbar {
+                left: 0;
+                width: 100%;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .footer {
+                width: 100%;
+                left: 0;
+            }
+        }
+
+        .card button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #303942;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card button:hover {
+            background-color: #556270;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="mySidebar">
+        <div class="logo">
+            <img src="../src/logo-owl.png" alt="Logo">
+            <span class="logo-text" style="color: white;"><b>Reconnaissance</b></span>
+        </div>
+        <a href="search.html">
+            <i class="fa fa-solid fa-magnifying-glass"></i> Search Engine
+        </a>
+        <a href="facebook.html">
+            <i class="fa-brands fa-facebook"></i> Facebook
+        </a>
+        <a href="twitter.html">
+            <i class="fa-brands fa-twitter"></i> Twitter
+        </a>
+        <a href="instagram.html">
+            <i class="fa-brands fa-instagram"></i> Instagram
+        </a>
+        <a href="linkedin.html">
+            <i class="fa-brands fa-linkedin"></i> Linkedin
+        </a>
+        <a href="communities.html">
+            <i class="fa-solid fa-comments"></i> Comunities
+        </a>
+        <a href="email.html">
+            <i class="fa-solid fa-envelope"></i> Email Address
+        </a>
+        <a href="username.html" class="active">
+            <i class="fa-solid fa-user"></i> Usernames
+        </a>
+        <a href="name.html">
+            <i class="fa-solid fa-person"></i> Name
+        </a>
+        <a href="maps.html">
+            <i class="fa-solid fa-map"></i> Maps
+        </a>
+        <a href="documents.html">
+            <i class="fa-solid fa-file"></i> Documents
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-folder"></i> Pastes
+        </a>
+        <a href="images.html">
+            <i class="fa-solid fa-image"></i> Image
+        </a>
+        <a href="domain.html">
+            <i class="fa-solid fa-globe"></i> Domain
+        </a>
+        <a href="ip.html">
+            <i class="fa-solid fa-earth-americas"></i> IP Address
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-car"></i> Vehicles
+        </a>
+        <a href="leaks.html">
+            <i class="fa-solid fa-key"></i> Data Breach & Leaks
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-gavel"></i> Mahkamah Agung
+        </a>
+        <a href="education.html">
+            <i class="fa-solid fa-school"></i> Pendidikan
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-landmark"></i> Goverments
+        </a>
+        <a href="busniess.html">
+            <i class="fa-brands fa-sellsy"></i> Busniess</a>
+        <a href="#">
+            <i class="fa-solid fa-repeat"></i> OSINT Flow charts
+        </a>
+    </div>
+
+    <!-- Navbar -->
+    <div class="navbar" id="myNavbar">
+        <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
+        <h1><a href="../index.html" style="text-decoration: none; color: inherit;">OSINT Dashboard</a></h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="myContent">
+        <div class="card">
+            <h2 style="font-size: 18px; text-align: left;">Username Search Tools</h2>
+            <div class="card-body">
+                <form onsubmit="doPopAll(this.PopAll.value); return false;">
+                    <input type="text" id="PopAll" name="PopAll" size="30" placeholder="Search Terms" />
+                    <input type="submit" value="Populate All" />
+                </form>
+                <br><br>
+
+                <script type="text/javascript">
+                    function doSearch01(Search01) {
+                        window.open('https://www.google.com/search?q=%22' + Search01 + '%22', 'Search01window');
+                    }
+                </script>
+                <form onsubmit="doSearch01(this.Search01.value); return false;">
+                    <input type="text" id="Search01" name="Search01" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Google" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch02(Search02) {
+                        window.open('https://www.bing.com/search?q=%22' + Search02 + '%22', 'Search02window');
+                    }
+                </script>
+                <form onsubmit="doSearch02(this.Search02.value); return false;">
+                    <input type="text" id="Search02" name="Search02" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Bing" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch03(Search03) {
+                        window.open('https://yandex.com/search/?text="' + Search03 + '"', 'Search03window');
+                    }
+                </script>
+                <form onsubmit="doSearch03(this.Search03.value); return false;">
+                    <input type="text" id="Search03" name="Search03" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Yandex" /></form><br><br>
+
+                <script type="text/javascript">
+                    function doSearch04(Search04) {
+                        window.open('https://knowem.com/checkusernames.php?u=' + Search04, 'Search04window');
+                    }
+                </script>
+                <form onsubmit="doSearch04(this.Search04.value); return false;">
+                    <input type="text" id="Search04" name="Search04" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="KnowEm Basic" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch05(Search05) {
+                        window.open('https://knowem.com/checksocialnames.php?u=' + Search05, 'Search05window');
+                    }
+                </script>
+                <form onsubmit="doSearch05(this.Search05.value); return false;">
+                    <input type="text" id="Search05" name="Search05" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="KnowEm Adv" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch06(Search06) {
+                        window.open('https://usersearch.org/results_normal.php?URL_username=' + Search06,
+                            'Search06awindow');
+                        window.open('https://usersearch.org/results_advanced.php?URL_username=' + Search06,
+                            'Search06bwindow');
+                        window.open('https://usersearch.org/results_advanced1.php?URL_username=' + Search06,
+                            'Search06cwindow');
+                        window.open('https://usersearch.org/results_advanced2.php?URL_username=' + Search06,
+                            'Search06dwindow');
+                        window.open('https://usersearch.org/results_advanced4.php?URL_username=' + Search06,
+                            'Search06ewindow');
+                        window.open('https://usersearch.org/results_advanced5.php?URL_username=' + Search06,
+                            'Search06fwindow');
+                        window.open('https://usersearch.org/results_advanced6.php?URL_username=' + Search06,
+                            'Search06gwindow');
+                        window.open('https://usersearch.org/results_advanced7.php?URL_username=' + Search06,
+                            'Search06hwindow');
+                        window.open('https://usersearch.org/results_dating.php?URL_username=' + Search06,
+                            'Search06iwindow');
+                        window.open('https://usersearch.org/results_forums.php?URL_username=' + Search06,
+                            'Search06jwindow');
+                        window.open('https://usersearch.org/results_crypto.php?URL_username=' + Search06,
+                            'Search06kwindow');
+                    }
+                </script>
+                <form onsubmit="doSearch06(this.Search06.value); return false;">
+                    <input type="text" id="Search06" name="all" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="UserSearch" />
+                </form><br>
+
+                <script type="text/javascript">
+                    function doSearch07(Search07) {
+                        window.open('https://namevine.com/#/' + Search07, 'Search07window');
+                    }
+                </script>
+                <form onsubmit="doSearch07(this.Search07.value); return false;">
+                    <input type="text" id="Search07" name="Search07" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="NameVine" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch08(Search08) {
+                        window.open('https://www.social-searcher.com/search-users/?ntw=&q6=' + Search08,
+                            'Search08window');
+                    }
+                </script>
+                <form onsubmit="doSearch08(this.Search08.value); return false;">
+                    <input type="text" id="Search08" name="Search08" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="SocialSearcher" /></form><br><br>
+
+                <script type="text/javascript">
+                    function doSearch09(Search09) {
+                        window.open('https://haveibeenpwned.com/unifiedsearch/' + Search09, 'Search09window');
+                    }
+                </script>
+                <form onsubmit="doSearch09(this.Search09.value); return false;">
+                    <input type="text" id="Search09" name="Search09" size="30" placeholder="Username" />
+                    <input type="submit" value="HaveIBeenPwned" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch10(Search10) {
+                        window.open('https://dehashed.com/search?query="' + Search10 + '"', 'Search10window');
+                    }
+                </script>
+                <form onsubmit="doSearch10(this.Search10.value); return false;">
+                    <input type="text" id="Search10" name="Search10" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Dehashed" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch11(Search11) {
+                        window.open('https://psbdmp.ws/api/search/' + Search11, 'Search11window');
+                    }
+                </script>
+                <form onsubmit="doSearch11(this.Search11.value); return false;">
+                    <input type="text" id="Search11" name="Search11" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="PSBDMP" /></form><br><br>
+
+                <script type="text/javascript">
+                    function doSearch12(Search12) {
+                        window.open('https://en.gravatar.com/' + Search12, 'Search12window');
+                    }
+                </script>
+                <form onsubmit="doSearch12(this.Search12.value); return false;">
+                    <input type="text" id="Search12" name="Search12" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Gravater" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch13(Search13) {
+                        window.open('https://linktr.ee/' + Search13, 'Search13window');
+                    }
+                </script>
+                <form onsubmit="doSearch13(this.Search13.value); return false;">
+                    <input type="text" id="Search13" name="Search13" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="LinkTree" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch14(Search14) {
+                        window.open('https://www.searchmy.bio/search?q=' + Search14, 'Search14window');
+                    }
+                </script>
+                <form onsubmit="doSearch14(this.Search14.value); return false;">
+                    <input type="text" id="Search14" name="Search14" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="InstagramBio" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch15(Search15) {
+                        window.open('http://x.com/' + Search15, 'Search15window');
+                    }
+                </script>
+                <form onsubmit="doSearch15(this.Search15.value); return false;">
+                    <input type="text" id="Search15" name="Search15" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Twitter" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch16(Search16) {
+                        window.open('https://facebook.com/' + Search16, 'Search16window');
+                    }
+                </script>
+                <form onsubmit="doSearch16(this.Search16.value); return false;">
+                    <input type="text" id="Search16" name="Search16" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Facebook" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch17(Search17) {
+                        window.open('http://instagram.com/' + Search17, 'Search17window');
+                    }
+                </script>
+                <form onsubmit="doSearch17(this.Search17.value); return false;">
+                    <input type="text" id="Search17" name="Search17" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Instagram" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch18(Search18) {
+                        window.open('https://www.tiktok.com/@' + Search18, 'Search18window');
+                    }
+                </script>
+                <form onsubmit="doSearch18(this.Search18.value); return false;">
+                    <input type="text" id="Search18" name="Search18" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="TikTok" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch19(Search19) {
+                        window.open('https://tinder.com/@' + Search19, 'Search19window');
+                    }
+                </script>
+                <form onsubmit="doSearch19(this.Search19.value); return false;">
+                    <input type="text" id="Search19" name="Search19" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Tinder" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch20(Search20) {
+                        window.open('https://' + Search20 + '.tumblr.com', 'Search20window');
+                    }
+                </script>
+                <form onsubmit="doSearch20(this.Search20.value); return false;">
+                    <input type="text" id="Search20" name="Search20" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Tumblr" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch21(Search21) {
+                        window.open('https://www.snapchat.com/s/' + Search21, 'Search21window');
+                    }
+                </script>
+                <form onsubmit="doSearch21(this.Search21.value); return false;">
+                    <input type="text" id="Search21" name="Search21" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Snapchat" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch22(Search22) {
+                        window.open('https://medium.com/@' + Search22, 'Search22window');
+                    }
+                </script>
+                <form onsubmit="doSearch22(this.Search22.value); return false;">
+                    <input type="text" id="Search22" name="Search22" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Medium" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch23(Search23) {
+                        window.open('http://youtube.com/' + Search23, 'Search23window');
+                    }
+                </script>
+                <form onsubmit="doSearch23(this.Search23.value); return false;">
+                    <input type="text" id="Search23" name="Search23" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="YouTube" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch24(Search24) {
+                        window.open('https://www.reddit.com/user/' + Search24, 'Search24window');
+                    }
+                </script>
+                <form onsubmit="doSearch24(this.Search24.value); return false;">
+                    <input type="text" id="Search24" name="Search24" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Reddit" /></form><br><br>
+
+                <script type="text/javascript">
+                    function doall(all) {
+                        window.open('https://www.google.com/search?q=%22' + all + '%22', 'Search01window');
+                        window.open('https://www.bing.com/search?q=%22' + all + '%22', 'Search02window');
+                        window.open('https://yandex.com/search/?text="' + all + '"', 'Search03window');
+                        window.open('https://knowem.com/checkusernames.php?u=' + all, 'Search04window');
+                        window.open('https://knowem.com/checksocialnames.php?u=' + all, 'Search05window');
+                        window.open('https://usersearch.org/results_normal.php?URL_username=' + all, 'Search06awindow');
+                        window.open('https://usersearch.org/results_advanced.php?URL_username=' + all,
+                            'Search06bwindow');
+                        window.open('https://usersearch.org/results_advanced1.php?URL_username=' + all,
+                            'Search06cwindow');
+                        window.open('https://usersearch.org/results_advanced2.php?URL_username=' + all,
+                            'Search06dwindow');
+                        window.open('https://usersearch.org/results_advanced4.php?URL_username=' + all,
+                            'Search06ewindow');
+                        window.open('https://usersearch.org/results_advanced5.php?URL_username=' + all,
+                            'Search06fwindow');
+                        window.open('https://usersearch.org/results_advanced6.php?URL_username=' + all,
+                            'Search06gwindow');
+                        window.open('https://usersearch.org/results_advanced7.php?URL_username=' + all,
+                            'Search06hwindow');
+                        window.open('https://usersearch.org/results_dating.php?URL_username=' + all + '.html',
+                            'Search06iwindow');
+                        window.open('https://usersearch.org/results_forums.php?URL_username=' + all, 'Search06jwindow');
+                        window.open('https://usersearch.org/results_crypto.php?URL_username=' + all, 'Search06kwindow');
+                        window.open('https://namevine.com/#/' + all, 'Search07window');
+                        window.open('https://www.social-searcher.com/search-users/?ntw=&q6=' + all, 'Search08window');
+                        window.open('https://haveibeenpwned.com/unifiedsearch/' + all, 'Search09window');
+                        window.open('https://dehashed.com/search?query="' + all + '"', 'Search10window');
+                        window.open('https://linktr.ee/' + all, 'Search11window');
+                        window.open('https://psbdmp.ws/api/search/' + all, 'Search12window');
+                        window.open('https://en.gravatar.com/' + all, 'Search13window');
+                        window.open('https://www.searchmy.bio/search?q=' + all, 'Search14window');
+                        window.open('http://x.com/' + all, 'Search15window');
+                        window.open('https://facebook.com/' + all, 'Search16window');
+                        window.open('http://instagram.com/' + all, 'Search17window');
+                        window.open('https://www.tiktok.com/@' + all, 'Search18window');
+                        window.open('https://tinder.com/@' + all, 'Search19window');
+                        window.open('https://' + all + '.tumblr.com', 'Search20window');
+                        window.open('https://www.snapchat.com/s/' + all, 'Search21window');
+                        window.open('https://medium.com/@' + all, 'Search22window');
+                        window.open('http://youtube.com/' + all, 'Search23window');
+                        window.open('https://www.reddit.com/user/' + all, 'Search24window');
+                    }
+                </script>
+                <form onsubmit="doall(this.all.value); return false;">
+                    <input type="text" id="Search90" name="all" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Submit All" />
+                </form><br><br>
+
+                <script type="text/javascript">
+                    function doall2(all2) {
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@gmail.com?truncateResponse=true', '1leakwindow');
+                        }, 1000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@yahoo.com?truncateResponse=true', '2leakwindow');
+                        }, 3000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@hotmail.com?truncateResponse=true', '3leakwindow');
+                        }, 6000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@protonmail.com?truncateResponse=true', '4leakwindow');
+                        }, 9000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@live.com?truncateResponse=true', '5leakwindow');
+                        }, 12000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@outlook.com?truncateResponse=true', '6leakwindow');
+                        }, 15000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@icloud.com?truncateResponse=true', '7leakwindow');
+                        }, 18000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@yandex.com?truncateResponse=true', '8leakwindow');
+                        }, 21000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@gmx.com?truncateResponse=true', '9leakwindow');
+                        }, 23000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@mail.com?truncateResponse=true', '10leakwindow');
+                        }, 26000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@mac.com?truncateResponse=true', '11leakwindow');
+                        }, 29000);
+                        setTimeout(function () {
+                            window.open('https://haveibeenpwned.com/unifiedsearch/' + all2 +
+                                '@me.com?truncateResponse=true', '12leakwindow');
+                        }, 32000);
+                    }
+                </script>
+                <form onsubmit="doall2(this.all2.value); return false;">
+                    <input type="text" name="all2" id="Search91" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="HIBP Emails" /></form><br>
+
+                <script type="text/javascript">
+                    function doall3(all3) {
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@gmail.com%22',
+                                '1leak3window');
+                        }, 1000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@yahoo.com%22',
+                                '2leak3window');
+                        }, 3000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@hotmail.com%22',
+                                '3leak3window');
+                        }, 6000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@protonmail.com%22',
+                                '4leak3window');
+                        }, 9000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@live.com%22',
+                                '5leak3window');
+                        }, 12000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@outlook.com%22',
+                                '6leak3window');
+                        }, 15000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@icloud.com%22',
+                                '7leak3window');
+                        }, 18000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@yandex.com%22',
+                                '8leak3window');
+                        }, 21000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@gmx.com%22',
+                                '9leak3window');
+                        }, 23000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@mail.com%22',
+                                '10leak3window');
+                        }, 26000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@mac.com%22',
+                                '11leak3window');
+                        }, 29000);
+                        setTimeout(function () {
+                            window.open('https://dehashed.com/search?query=%22' + all3 + '@me.com%22',
+                                '12leak3window');
+                        }, 32000);
+                    }
+                </script>
+                <form onsubmit="doall3(this.all3.value); return false;">
+                    <input type="text" name="all3" id="Search92" size="30" placeholder="Username" value="" />
+                    <input type="submit" value="Dehashed Emails" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch25(Search25) {
+                        window.open('https://www.google.com/search?q=%22' + Search25 + '@gmail.com%22OR%22' + Search25 +
+                            '@yahoo.com%22OR%22' + Search25 + '@hotmail.com%22OR%22' + Search25 +
+                            '@protonmail.com%22OR%22' + Search25 + '@live.com%22OR%22' + Search25 +
+                            '@icloud.com%22OR%22' + Search25 + '@yandex.com%22OR%22' + Search25 +
+                            '@gmx.com%22OR%22' + Search25 + '@mail.com%22OR%22' + Search25 + '@mac.com%22OR%22' +
+                            Search25 + '@me.com%22', 'Search25window');
+                    }
+                </script>
+                <form onsubmit="doSearch25(this.Search25.value); return false;">
+                    <input type="text" name="Search25" id="Search25" size="30" placeholder="Username" />
+                    <input type="submit" value="Email Search" /></form><br>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            function doPopAll(PopAll) {
+                var pop = document.getElementById("PopAll");
+                for (j = 1; j <= 100; j++) {
+                    if (j < 10) {
+                        j = "0" + j.toString();
+                    } else {
+                        j = j.toString();
+                    }
+                    console.log(j)
+                    item = document.getElementById("Search" + j);
+                    if (item != null) {
+                        item.value = pop.value;
+                    }
+                }
+            }
+        </script>
+    </div>
+
+    <!-- Footer -->
+    <br><br>
+    <div class="footer">
+        <p class="copyright" style="color: black;">&copy; 2024 Dika Maulidal. All Rights Reserved.</p>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById("mySidebar");
+            var navbar = document.getElementById("myNavbar");
+            var content = document.getElementById("myContent");
+            var footer = document.querySelector(".footer");
+
+            if (sidebar.style.width === "0px" || sidebar.style.width === "") {
+                sidebar.style.width = "250px";
+                navbar.style.left = "250px";
+                navbar.style.width = "calc(100% - 250px)";
+                content.style.marginLeft = "270px";
+                footer.style.width = "calc(100% - 250px)";
+                footer.style.left = "250px";
+            } else {
+                sidebar.style.width = "0";
+                navbar.style.left = "0";
+                navbar.style.width = "100%";
+                content.style.marginLeft = "0";
+                footer.style.width = "100%";
+                footer.style.left = "0";
+            }
+        }
+    </script>
+
+</body>
+
+</html>

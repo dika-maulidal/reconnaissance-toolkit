@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f6fa;
+        }
+
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #303942;
+            overflow-x: hidden;
+            padding-top: 5px;
+            transition: 0.5s;
+        }
+
+        .sidebar .logo {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .logo img {
+            width: 70px;
+            height: auto;
+        }
+
+        .sidebar .logo-text {
+            font-size: 16px;
+            color: #cbcbcb;
+            font-weight: normal;
+        }
+
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #9f9f9f;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            color: #c2c2c2;
+            /* text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); */
+        }
+
+        .sidebar .active {
+            background-color: #556270;
+        }
+
+        .sidebar a.active {
+            background-color: transparent;
+            color: #ffffff;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 250px;
+            width: calc(100% - 250px);
+            background-color: #fff;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar .hamburger {
+            font-size: 24px;
+            cursor: pointer;
+            color: #303942;
+            margin-right: 15px;
+        }
+
+        .navbar h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #303942;
+        }
+
+        .content {
+            margin-left: 270px;
+            /* 250px (sidebar width) + 20px (desired margin) */
+            padding: 15px;
+            padding-top: 70px;
+            transition: 0.5s;
+        }
+
+        .content h1 {
+            text-align: center;
+            color: #303942;
+            margin-top: 50px;
+        }
+
+        .content img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 20px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .content p {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 16px;
+            color: #8c8c8c;
+        }
+
+        /* Footer Styling */
+        .footer {
+            background-color: #fbfbfbd8;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: calc(100% - 250px);
+            left: 250px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            transition: 0.5s;
+        }
+
+        .footer .copyright {
+            margin: 0;
+            font-size: 14px;
+            color: #303942;
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 20px auto 20px 0;
+            /* Auto pada kanan agar card tidak berada di tengah */
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #303942;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Form Styling */
+        .card form {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: -6px 0;
+        }
+
+        .card input[type="text"] {
+            flex-grow: 1;
+            padding: 5px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .card input[type="submit"] {
+            padding: 5px 15px;
+            font-size: 14px;
+            background-color: #303942;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card input[type="submit"]:hover {
+            background-color: #556270;
+        }
+
+        @media screen and (max-width: 768px) {
+            .card form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .card input[type="text"] {
+                margin-bottom: 1px;
+                width: 100%;
+            }
+
+            .card input[type="submit"] {
+                width: 50%;
+            }
+
+            .sidebar {
+                width: 0;
+            }
+
+            .navbar {
+                left: 0;
+                width: 100%;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .footer {
+                width: 100%;
+                left: 0;
+            }
+        }
+
+        .card button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #303942;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card button:hover {
+            background-color: #556270;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="mySidebar">
+        <div class="logo">
+            <img src="../src/logo-owl.png" alt="Logo">
+            <span class="logo-text" style="color: white;"><b>Reconnaissance</b></span>
+        </div>
+        <a href="search.html">
+            <i class="fa fa-solid fa-magnifying-glass"></i> Search Engine
+        </a>
+        <a href="facebook.html">
+            <i class="fa-brands fa-facebook"></i> Facebook
+        </a>
+        <a href="twitter.html">
+            <i class="fa-brands fa-twitter"></i> Twitter
+        </a>
+        <a href="instagram.html">
+            <i class="fa-brands fa-instagram"></i> Instagram
+        </a>
+        <a href="linkedin.html">
+            <i class="fa-brands fa-linkedin"></i> Linkedin
+        </a>
+        <a href="communities.html">
+            <i class="fa-solid fa-comments"></i> Comunities
+        </a>
+        <a href="email.html">
+            <i class="fa-solid fa-envelope"></i> Email Address
+        </a>
+        <a href="username.html">
+            <i class="fa-solid fa-user"></i> Usernames
+        </a>
+        <a href="name.html">
+            <i class="fa-solid fa-person"></i> Name
+        </a>
+        <a href="maps.html">
+            <i class="fa-solid fa-map"></i> Maps
+        </a>
+        <a href="documents.html">
+            <i class="fa-solid fa-file"></i> Documents
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-folder"></i> Pastes
+        </a>
+        <a href="images.html">
+            <i class="fa-solid fa-image"></i> Image
+        </a>
+        <a href="domain.html" class="active">
+            <i class="fa-solid fa-globe"></i> Domain
+        </a>
+        <a href="ip.html">
+            <i class="fa-solid fa-earth-americas"></i> IP Address
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-car"></i> Vehicles
+        </a>
+        <a href="leaks.html">
+            <i class="fa-solid fa-key"></i> Data Breach & Leaks
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-gavel"></i> Mahkamah Agung
+        </a>
+        <a href="education.html">
+            <i class="fa-solid fa-school"></i> Pendidikan
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-landmark"></i> Goverments
+        </a>
+        <a href="busniess.html">
+            <i class="fa-brands fa-sellsy"></i> Busniess</a>
+        <a href="#">
+            <i class="fa-solid fa-repeat"></i> OSINT Flow charts
+        </a>
+    </div>
+
+    <!-- Navbar -->
+    <div class="navbar" id="myNavbar">
+        <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
+        <h1><a href="../index.html" style="text-decoration: none; color: inherit;">OSINT Dashboard</a></h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content" id="myContent">
+        <div class="card">
+            <h2 style="font-size: 18px; text-align: left;">Domain Search Tools</h2>
+            <div class="card-body">
+                <script type="text/javascript">
+                    function doPopAll(PopAll) {
+                        var pop = document.getElementById("PopAll");
+                        for (j = 1; j <= 100; j++) {
+                            if (j < 10) {
+                                j = "0" + j.toString();
+                            } else {
+                                j = j.toString();
+                            }
+                            console.log(j)
+                            item = document.getElementById("Search" + j);
+                            if (item != null) {
+                                item.value = pop.value;
+                            }
+                        }
+                    }
+                </script>
+                <form onsubmit="doPopAll(this.PopAll.value); return false;">
+                    <input type="text" id="PopAll" name="PopAll" size="30" placeholder="Domain Name" />
+                    <input type="submit" value="Populate All" /></form><br><br>
+
+                <script type="text/javascript">
+                    function doSearch01(Search01) {
+                        window.open('http://viewdns.info/whois/?domain=' + Search01, 'Search01window');
+                    }
+                </script>
+                <form onsubmit="doSearch01(this.Search01.value); return false;">
+                    <input type="text" id="Search01" name="Search01" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Whois" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch02(Search02) {
+                        window.open('http://viewdns.info/reverseip/?host=' + Search02 + '&t=1', 'Search02window');
+                    }
+                </script>
+                <form onsubmit="doSearch02(this.Search02.value); return false;">
+                    <input type="text" id="Search02" name="Search02" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Reverse IP" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch03(Search03) {
+                        window.open('http://viewdns.info/reversewhois/?q=' + Search03 + '&t=1', 'Search03window');
+                    }
+                </script>
+                <form onsubmit="doSearch03(this.Search03.value); return false;">
+                    <input type="text" id="Search03" name="Search03" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Reverse Domain" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch04(Search04) {
+                        window.open('http://viewdns.info/portscan/?host=' + Search04, 'Search04window');
+                    }
+                </script>
+                <form onsubmit="doSearch04(this.Search04.value); return false;">
+                    <input type="text" id="Search04" name="Search04" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Port Scan" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch05(Search05) {
+                        window.open('http://viewdns.info/iphistory/?domain=' + Search05, 'Search05window');
+                    }
+                </script>
+                <form onsubmit="doSearch05(this.Search05.value); return false;">
+                    <input type="text" id="Search05" name="Search05" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="IP History" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch06(Search06) {
+                        window.open('http://viewdns.info/dnsreport/?domain=' + Search06, 'Search06window');
+                    }
+                </script>
+                <form onsubmit="doSearch06(this.Search06.value); return false;">
+                    <input type="text" id="Search06" name="Search06" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="DNS Report" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch07(Search07) {
+                        window.open('http://viewdns.info/traceroute/?domain=' + Search07, 'Search07window');
+                    }
+                </script>
+                <form onsubmit="doSearch07(this.Search07.value); return false;">
+                    <input type="text" id="Search07" name="Search07" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="TraceRoute" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch08(Search08) {
+                        window.open('http://who.is/whois/' + Search08, 'Search08window');
+                    }
+                </script>
+                <form onsubmit="doSearch08(this.Search08.value); return false;">
+                    <input type="text" id="Search08" name="Search08" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Who.Is" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch09(Search09) {
+                        window.open('http://who.is/dns/' + Search09, 'Search09window');
+                    }
+                </script>
+                <form onsubmit="doSearch09(this.Search09.value); return false;">
+                    <input type="text" id="Search09" name="Search09" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Who.Is DNS" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch10(Search10) {
+                        window.open('http://who.is/domain-history/' + Search10, 'Search10window');
+                    }
+                </script>
+                <form onsubmit="doSearch10(this.Search10.value); return false;">
+                    <input type="text" id="Search10" name="Search10" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Who.Is History" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch70(Search70) {
+                        window.open('https://trustscam.com/' + Search70, 'Search70window');
+                    }
+                </script>
+                <form onsubmit="doSearch70(this.Search70.value); return false;">
+                    <input type="text" id="Search70" name="Search70" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="TrustScam" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch84(Search84) {
+                        window.open('https://urlscan.io/search/#page.domain%3A' + Search84, 'Search84window');
+                    }
+                </script>
+                <form onsubmit="doSearch84(this.Search84.value); return false;">
+                    <input type="text" id="Search84" name="Search84" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="URLScan" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch11(Search11) {
+                        window.open('https://dmns.app/domains?q=' + Search11, 'Search11window');
+                    }
+                </script>
+                <form onsubmit="doSearch11(this.Search11.value); return false;">
+                    <input type="text" id="Search11" name="Search11" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="DomainApp DNS" /></form><br><br>
+
+                <script type="text/javascript">
+                    function doSearch12(Search12) {
+                        window.open('https://www.whoxy.com/' + Search12, 'Search12window');
+                    }
+                </script>
+                <form onsubmit="doSearch12(this.Search12.value); return false;">
+                    <input type="text" id="Search12" name="Search12" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Whoxy" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch13(Search13) {
+                        window.open('https://whoisology.com/' + Search13, 'Search13window');
+                    }
+                </script>
+                <form onsubmit="doSearch13(this.Search13.value); return false;">
+                    <input type="text" id="Search13" name="Search13" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Whoisology" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch15(Search15) {
+                        window.open('https://web.archive.org/web/http://www.who.is/whois/' + Search15,
+                            'Search15window');
+                    }
+                </script>
+                <form onsubmit="doSearch15(this.Search15.value); return false;">
+                    <input type="text" id="Search15" name="Search15" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Whois Archive 1" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch16(Search16) {
+                        window.open('https://web.archive.org/web/https://whois.domaintools.com/' + Search16,
+                            'Search16window');
+                    }
+                </script>
+                <form onsubmit="doSearch16(this.Search16.value); return false;">
+                    <input type="text" id="Search16" name="Search16" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Whois Archive 2" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch17(Search17) {
+                        window.open('https://web.archive.org/web/https://www.whoxy.com/' + Search17, 'Search17window');
+                    }
+                </script>
+                <form onsubmit="doSearch17(this.Search17.value); return false;">
+                    <input type="text" id="Search17" name="Search17" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Whois Archive 3" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch18(Search18) {
+                        window.open('https://web.archive.org/web/https://domainbigdata.com/' + Search18,
+                            'Search18window');
+                    }
+                </script>
+                <form onsubmit="doSearch18(this.Search18.value); return false;">
+                    <input type="text" id="Search18" name="Search18" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Whois Archive 4" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch19(Search19) {
+                        window.open('https://web.archive.org/web/https://whoisology.com/' + Search19, 'Search19window');
+                    }
+                </script>
+                <form onsubmit="doSearch19(this.Search19.value); return false;">
+                    <input type="text" id="Search19" name="Search19" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Whois Archive 5" /></form><br>
+
+                <br>
+                <script type="text/javascript">
+                    function doSearch20(Search20) {
+                        window.open('http://web.archive.org/web/*/' + Search20, 'Search20window');
+                    }
+                </script>
+                <form onsubmit="doSearch20(this.Search20.value); return false;">
+                    <input type="text" id="Search20" name="Search20" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Archive.org" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch83(Search83) {
+                        window.open('https://web.archive.org/cdx/search/cdx?url=' + Search83 +
+                            '/*&output=text&fl=original&collapse=urlkey', 'Search83window');
+                    }
+                </script>
+                <form onsubmit="doSearch83(this.Search83.value); return false;">
+                    <input type="text" id="Search83" name="Search83" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Archive Scan" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch21(Search21) {
+                        window.open('http://archive.md/' + Search21, 'Search21window');
+                    }
+                </script>
+                <form onsubmit="doSearch21(this.Search21.value); return false;">
+                    <input type="text" id="Search21" name="Search21" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Archive.md" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch22(Search22) {
+                        window.open('http://timetravel.mementoweb.org/list/19991212110000/http://' + Search22,
+                            'Search22window');
+                    }
+                </script>
+                <form onsubmit="doSearch22(this.Search22.value); return false;">
+                    <input type="text" id="Search22" name="Search22" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Mementoweb" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch23(Search23) {
+                        window.open('https://webarchive.loc.gov/all/*/http://' + Search23, 'Search23window');
+                    }
+                </script>
+                <form onsubmit="doSearch23(this.Search23.value); return false;">
+                    <input type="text" id="Search23" name="Search23" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Congress" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch24(Search24) {
+                        window.open('https://arquivo.pt/page/search?hitsPerPage=100&query=site%3A' + Search24,
+                            'Search24window');
+                    }
+                </script>
+                <form onsubmit="doSearch24(this.Search24.value); return false;">
+                    <input type="text" id="Search24" name="Search24" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Arquivo" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch25(Search25) {
+                        window.open('http://carbondate.cs.odu.edu/#' + Search25, 'Search25window');
+                    }
+                </script>
+                <form onsubmit="doSearch25(this.Search25.value); return false;">
+                    <input type="text" id="Search25" name="Search25" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="CarbonDating" /></form><br>
+
+                <br>
+                <script type="text/javascript">
+                    function doSearch26(Search26) {
+                        window.open('http://google.com/search?q=site%3A' + Search26, 'Search26window');
+                    }
+                </script>
+                <form onsubmit="doSearch26(this.Search26.value); return false;">
+                    <input type="text" id="Search26" name="Search26" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Google Site" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch27(Search27) {
+                        window.open('http://webcache.googleusercontent.com/search?q=cache:' + Search27,
+                            'Search27window');
+                    }
+                </script>
+                <form onsubmit="doSearch27(this.Search27.value); return false;">
+                    <input type="text" id="Search27" name="Search27" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Google Cache" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch28(Search28) {
+                        window.open('https://website.informer.com/' + Search28 + '#tab_stats', 'Search28window');
+                    }
+                </script>
+                <form onsubmit="doSearch28(this.Search28.value); return false;">
+                    <input type="text" id="Search28" name="Search28" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Screenshot 1" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch29(Search29) {
+                        window.open('https://urlscan.io/domain/' + Search29, 'Search29window');
+                    }
+                </script>
+                <form onsubmit="doSearch29(this.Search29.value); return false;">
+                    <input type="text" id="Search29" name="Search29" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Screenshot 2" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch30(Search30) {
+                        window.open('https://www.easycounter.com/report/' + Search30, 'Search30window');
+                    }
+                </script>
+                <form onsubmit="doSearch30(this.Search30.value); return false;">
+                    <input type="text" id="Search30" name="Search30" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Screenshot 3" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch31(Search31) {
+                        window.open('https://whois.domaintools.com/' + Search31, 'Search31window');
+                    }
+                </script>
+                <form onsubmit="doSearch31(this.Search31.value); return false;">
+                    <input type="text" id="Search31" name="Search31" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Screenshot 4" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch32(Search32) {
+                        window.open('https://www.domainiq.com/snapshot_history#' + Search32, 'Search32window');
+                    }
+                </script>
+                <form onsubmit="doSearch32(this.Search32.value); return false;">
+                    <input type="text" id="Search32" name="Search32" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Screenshot 5" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch33(Search33) {
+                        window.open('https://files.dmns.app/screenshots/' + Search33 + '.jpg', 'Search33window');
+                    }
+                </script>
+                <form onsubmit="doSearch33(this.Search33.value); return false;">
+                    <input type="text" id="Search33" name="Search33" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Screenshot 6" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch87(Search87) {
+                        window.open('https://hypestat.com/info/' + Search87, 'Search87window');
+                    }
+                </script>
+                <form onsubmit="doSearch87(this.Search87.value); return false;">
+                    <input type="text" id="Search87" name="Search87" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Screenshot 7" /></form><br>
+
+                <br>
+                <script type="text/javascript">
+                    function doSearch92(Search92) {
+                        window.open('https://www.shodan.io/domain/' + Search92, 'Search92window');
+                    }
+                </script>
+                <form onsubmit="doSearch92(this.Search92.value); return false;">
+                    <input type="text" id="Search92" name="Search92" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Shodan" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch34(Search34) {
+                        window.open('http://spyonweb.com/' + Search34, 'Search34window');
+                    }
+                </script>
+                <form onsubmit="doSearch34(this.Search34.value); return false;">
+                    <input type="text" id="Search34" name="Search34" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="SpyOnWeb" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch35(Search35) {
+                        window.open('http://analyzeid.com/?domain=' + Search35, 'Search35window');
+                    }
+                </script>
+                <form onsubmit="doSearch35(this.Search35.value); return false;">
+                    <input type="text" id="Search35" name="Search35" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="AnalyzeID" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch36(Search36) {
+                        window.open('https://dnslytics.com/reverse-analytics/' + Search36, 'Search36window');
+                    }
+                </script>
+                <form onsubmit="doSearch36(this.Search36.value); return false;">
+                    <input type="text" id="Search36" name="Search36" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Google Analytics" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch37(Search37) {
+                        window.open('https://dnslytics.com/reverse-adsense/' + Search37, 'Search37window');
+                    }
+                </script>
+                <form onsubmit="doSearch37(this.Search37.value); return false;">
+                    <input type="text" id="Search37" name="Search37" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Google Adsense" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch38(Search38) {
+                        window.open('https://www.domainiq.com/snapshot_history?data=' + Search38 + '#' + Search38,
+                            'Search38window');
+                    }
+                </script>
+                <form onsubmit="doSearch38(this.Search38.value); return false;">
+                    <input type="text" id="Search38" name="Search38" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="DomainIQ" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch39(Search39) {
+                        window.open('http://moonsearch.com/report/' + Search39 + '.html', 'Search39awindow');
+                    }
+                </script>
+                <form onsubmit="doSearch39(this.Search39.value); return false;">
+                    <input type="text" id="Search39" name="Search39" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="MoonSearch" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch40(Search40) {
+                        window.open(
+                            'https://www.nerdydata.com/reports/new?search=%7B%22all%22%3A%5B%7B%22type%22%3A%22code%22,%22value%22%3A%22' +
+                            Search40 + '%22%7D%5D,%22any%22%3A%5B%5D,%22none%22%3A%5B%5D%7D', 'Search40window');
+                    }
+                </script>
+                <form onsubmit="doSearch40(this.Search40.value); return false;">
+                    <input type="text" id="Search40" name="Search40" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="NerdyData" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch41(Search41) {
+                        window.open('https://builtwith.com/' + Search41, 'Search41window');
+                    }
+                </script>
+                <form onsubmit="doSearch41(this.Search41.value); return false;">
+                    <input type="text" id="Search41" name="Search41" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="BuiltWith" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch42(Search42) {
+                        window.open('https://dnsdumpster.com/static/map/' + Search42 + '.png', 'Search42window');
+                    }
+                </script>
+                <form onsubmit="doSearch42(this.Search42.value); return false;">
+                    <input type="text" id="Search42" name="Search42" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="DNSDump" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch43(Search43) {
+                        window.open('http://' + Search43 + '/robots.txt', 'Search43window');
+                    }
+                </script>
+                <form onsubmit="doSearch43(this.Search43.value); return false;">
+                    <input type="text" id="Search43" name="Search43" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Robots.txt" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch44(Search44) {
+                        window.open('https://host.io/' + Search44, 'Search44window');
+                    }
+                </script>
+                <form onsubmit="doSearch44(this.Search44.value); return false;">
+                    <input type="text" id="Search44" name="Search44" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Host.io" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch45(Search45) {
+                        window.open('https://host.io/backlinks/' + Search45, 'Search45window');
+                    }
+                </script>
+                <form onsubmit="doSearch45(this.Search45.value); return false;">
+                    <input type="text" id="Search45" name="Search45" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Host.io Backlinks" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch46(Search46) {
+                        window.open('https://host.io/redirects/' + Search46, 'Search46window');
+                    }
+                </script>
+                <form onsubmit="doSearch46(this.Search46.value); return false;">
+                    <input type="text" id="Search46" name="Search46" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Host.io Redirects" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch47(Search47) {
+                        window.open('https://dnslytics.com/domain/' + Search47, 'Search47window');
+                    }
+                </script>
+                <form onsubmit="doSearch47(this.Search47.value); return false;">
+                    <input type="text" id="Search47" name="Search47" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="DNSlytics" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch48(Search48) {
+                        window.open('https://www.wmtips.com/tools/info/' + Search48, 'Search48window');
+                    }
+                </script>
+                <form onsubmit="doSearch48(this.Search48.value); return false;">
+                    <input type="text" id="Search48" name="Search48" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="WMTips" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch49(Search49) {
+                        window.open('https://www.robtex.com/dns-lookup/' + Search49, 'Search49window');
+                    }
+                </script>
+                <form onsubmit="doSearch49(this.Search49.value); return false;">
+                    <input type="text" id="Search49" name="Search49" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Robtex" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch50(Search50) {
+                        window.open('https://www.domaincodex.com/search.php?q=' + Search50, 'Search50window');
+                    }
+                </script>
+                <form onsubmit="doSearch50(this.Search50.value); return false;">
+                    <input type="text" id="Search50" name="Search50" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="DomainCodex" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch88(Search88) {
+                        window.open('https://website.informer.com/' + Search88 + '/emails', 'Search88window');
+                    }
+                </script>
+                <form onsubmit="doSearch88(this.Search88.value); return false;">
+                    <input type="text" id="Search88" name="Search88" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="InformerEmails" /></form><br>
+
+                <br>
+                <script type="text/javascript">
+                    function doSearch51(Search51) {
+                        window.open('http://www.similarweb.com/website/' + Search51, 'Search51window');
+                    }
+                </script>
+                <form onsubmit="doSearch51(this.Search51.value); return false;">
+                    <input type="text" id="Search51" name="Search51" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="SimilarWeb" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch52(Search52) {
+                        window.open('https://moz.com/domain-analysis?site=' + Search52, 'Search52window');
+                    }
+                </script>
+                <form onsubmit="doSearch52(this.Search52.value); return false;">
+                    <input type="text" id="Search52" name="Search52" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Moz" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch53(Search53) {
+                        window.open('https://www.spyfu.com/overview/domain?query=' + Search53, 'Search53window');
+                    }
+                </script>
+                <form onsubmit="doSearch53(this.Search53.value); return false;">
+                    <input type="text" id="Search53" name="Search53" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="SpyFu" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch54(Search54) {
+                        window.open('https://api.sharedcount.com/v1.0/?url=https%3A%2F%2F' + Search54 +
+                            '&apikey=1934f519a63e142e0d3c893e59cc37fe0172e98a', 'Search54window');
+                    }
+                </script>
+                <form onsubmit="doSearch54(this.Search54.value); return false;">
+                    <input type="text" id="Search54" name="Search54" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="SharedCount" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch55(Search55) {
+                        window.open('https://www.reddit.com/search?q=site:' + Search55, 'Search55window');
+                    }
+                </script>
+                <form onsubmit="doSearch55(this.Search55.value); return false;">
+                    <input type="text" id="Search55" name="Search55" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="RedditDomain" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch56(Search56) {
+                        window.open('http://bc.linkody.com/en/seo-tools/free-backlink-checker/' + Search56,
+                            'Search56window');
+                    }
+                </script>
+                <form onsubmit="doSearch56(this.Search56.value); return false;">
+                    <input type="text" id="Search56" name="Search56" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Backlinks" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch57(Search57) {
+                        window.open('https://www.copyscape.com/?q=http://' + Search57, 'Search57window');
+                    }
+                </script>
+                <form onsubmit="doSearch57(this.Search57.value); return false;">
+                    <input type="text" id="Search57" name="Search57" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="CopyScape" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch58(Search58) {
+                        window.open('http://www.visualsitemapper.com/map/' + Search58, 'Search58window');
+                    }
+                </script>
+                <form onsubmit="doSearch58(this.Search58.value); return false;">
+                    <input type="text" id="Search58" name="Search58" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="SiteMapper" /></form><br>
+
+                <br>
+                <script type="text/javascript">
+                    function doSearch14(Search14) {
+                        window.open('https://www.virustotal.com/#/domain/' + Search14, 'Search14window');
+                    }
+                </script>
+                <form onsubmit="doSearch14(this.Search14.value); return false;">
+                    <input type="text" id="Search14" name="Search14" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="VirusTotal" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch59(Search59) {
+                        window.open('https://threatintelligenceplatform.com/report/' + Search59, 'Search59window');
+                    }
+                </script>
+                <form onsubmit="doSearch59(this.Search59.value); return false;">
+                    <input type="text" id="Search59" name="Search59" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="ThreatIntel" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch60(Search60) {
+                        window.open(
+                            'https://search.censys.io/search?resource=hosts&sort=RELEVANCE&per_page=100&virtual_hosts=INCLUDE&q=' +
+                            Search60, 'Search60window');
+                    }
+                </script>
+                <form onsubmit="doSearch60(this.Search60.value); return false;">
+                    <input type="text" id="Search60" name="Search60" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Censys" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch61(Search61) {
+                        window.open('https://securitytrails.com/list/apex_domain/' + Search61, 'Search61window');
+                    }
+                </script>
+                <form onsubmit="doSearch61(this.Search61.value); return false;">
+                    <input type="text" id="Search61" name="Search61" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="SecurityTrails" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch62(Search62) {
+                        window.open('https://www.threatcrowd.org/domain.php?domain=' + Search62, 'Search62window');
+                    }
+                </script>
+                <form onsubmit="doSearch62(this.Search62.value); return false;">
+                    <input type="text" id="Search62" name="Search62" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="ThreatCrowd" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch63(Search63) {
+                        window.open('https://themarkup.org/blacklight?url=' + Search63, 'Search63window');
+                    }
+                </script>
+                <form onsubmit="doSearch63(this.Search63.value); return false;">
+                    <input type="text" id="Search63" name="Search63" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Blacklight" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch85(Search85) {
+                        window.open('https://leakix.net/domain/' + Search85, 'Search85window');
+                    }
+                </script>
+                <form onsubmit="doSearch85(this.Search85.value); return false;">
+                    <input type="text" id="Search85" name="Search85" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="LeakIX Domain" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch86(Search86) {
+                        window.open('https://leakix.net/search?scope=leak&q=' + Search86, 'Search86window');
+                    }
+                </script>
+                <form onsubmit="doSearch86(this.Search86.value); return false;">
+                    <input type="text" id="Search86" name="Search86" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="LeakIX Search" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch89(Search89) {
+                        window.open('https://www.spam.org/search?type=domain&convert_block=1&group_ips=1&data=' +
+                            Search89, 'Search89window');
+                    }
+                </script>
+                <form onsubmit="doSearch89(this.Search89.value); return false;">
+                    <input type="text" id="Search89" name="Search89" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Spam.org" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch90(Search90) {
+                        window.open('https://spamdb.org/blacklists?q=' + Search90, 'Search90window');
+                    }
+                </script>
+                <form onsubmit="doSearch90(this.Search90.value); return false;">
+                    <input type="text" id="Search90" name="Search90" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="SpamDB.org" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch91(Search91) {
+                        window.open('https://www.mywot.com/en/scorecard/' + Search91, 'Search91window');
+                    }
+                </script>
+                <form onsubmit="doSearch91(this.Search91.value); return false;">
+                    <input type="text" id="Search91" name="Search91" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="MyWOT" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch64(Search64) {
+                        window.open('https://crt.sh/?q=' + Search64, 'Search64window');
+                    }
+                </script>
+                <form onsubmit="doSearch64(this.Search64.value); return false;">
+                    <input type="text" id="Search64" name="Search64" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="CRT.sh" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch65(Search65) {
+                        window.open('https://dehashed.com/search?query=%22' + Search65 + '%22', 'Search65window');
+                    }
+                </script>
+                <form onsubmit="doSearch65(this.Search65.value); return false;">
+                    <input type="text" id="Search65" name="Search65" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Dehashed" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch66(Search66) {
+                        window.open('https://www.hudsonrock.com/search?domain=' + Search66, 'Search66window');
+                    }
+                </script>
+                <form onsubmit="doSearch66(this.Search66.value); return false;">
+                    <input type="text" id="Search66" name="Search66" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="HudsonRock" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch67(Search67) {
+                        window.open('https://intelx.io/?s=' + Search67, 'Search67window');
+                    }
+                </script>
+                <form onsubmit="doSearch67(this.Search67.value); return false;">
+                    <input type="text" id="Search67" name="Search67" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="IntelligenceX" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch68(Search68) {
+                        window.open('https://www.skymem.info/srch?q=' + Search68, 'Search68window');
+                    }
+                </script>
+                <form onsubmit="doSearch68(this.Search68.value); return false;">
+                    <input type="text" id="Search68" name="Search68" size="30" placeholder="Domain Name" value="" />
+                    <input type="submit" value="Skymem" /></form><br><br>
+
+                <script type="text/javascript">
+                    function doSearch69(Search69) {
+                        window.open('https://' + Search69 + '+', 'Search69window');
+                    }
+                </script>
+                <form onsubmit="doSearch69(this.Search69.value); return false;">
+                    <input type="text" name="Search69" size="30" placeholder="Entire Bit.ly URL" value="" />
+                    <input type="submit" value="Bit.ly" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch71(Search71) {
+                        window.open('https://' + Search71 + '~', 'Search71window');
+                    }
+                </script>
+                <form onsubmit="doSearch71(this.Search71.value); return false;">
+                    <input type="text" name="Search71" size="30" placeholder="Entire Tiny.cc URL" value="" />
+                    <input type="submit" value="Tiny.cc" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch72(Search72) {
+                        window.open('http://' + Search72 + '-', 'Search72window');
+                    }
+                </script>
+                <form onsubmit="doSearch72(this.Search72.value); return false;">
+                    <input type="text" name="Search72" size="30" placeholder="Entire Bit.do URL" value="" />
+                    <input type="submit" value="Bit.do" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch73(Search73) {
+                        window.open('http://checkshorturl.com/expand.php?u=' + Search73, 'Search73window');
+                    }
+                </script>
+                <form onsubmit="doSearch73(this.Search73.value); return false;">
+                    <input type="text" name="Search73" size="30" placeholder="Entire Short URL" value="" />
+                    <input type="submit" value="Any" /></form><br><br>
+
+                <script type="text/javascript">
+                    function doSearch74(Search74) {
+                        window.open('http://moonsearch.com/adsense/' + Search74 + '.html', 'Search74window');
+                    }
+                </script>
+                <form onsubmit="doSearch74(this.Search74.value); return false;">
+                    <input type="text" name="Search74" size="30" placeholder="AdSense ID" value="" />
+                    <input type="submit" value="MoonSearch" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch75(Search75) {
+                        window.open('https://analyzeid.com/id/ca-pub-' + Search75, 'Search75window');
+                    }
+                </script>
+                <form onsubmit="doSearch75(this.Search75.value); return false;">
+                    <input type="text" name="Search75" size="30" placeholder="AdSense ID" value="" />
+                    <input type="submit" value="AnalyzeID" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch76(Search76) {
+                        window.open('https://dnslytics.com/reverse-adsense/pub-' + Search76, 'Search76window');
+                    }
+                </script>
+                <form onsubmit="doSearch76(this.Search76.value); return false;">
+                    <input type="text" name="Search76" size="30" placeholder="AdSense ID" value="" />
+                    <input type="submit" value="DNSlytics" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch77(Search77) {
+                        window.open('https://api.hackertarget.com/analyticslookup/?q=pub-' + Search77,
+                            'Search77window');
+                    }
+                </script>
+                <form onsubmit="doSearch77(this.Search77.value); return false;">
+                    <input type="text" name="Search77" size="30" placeholder="Adsense ID" value="" />
+                    <input type="submit" value="HackerTarget" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch78(Search78) {
+                        window.open('http://moonsearch.com/analytics/' + Search78 + '.html', 'Search78window');
+                    }
+                </script>
+                <form onsubmit="doSearch78(this.Search78.value); return false;">
+                    <input type="text" name="Search78" size="30" placeholder="Analytics ID" value="" />
+                    <input type="submit" value="MoonSearch" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch79(Search79) {
+                        window.open('https://analyzeid.com/id/ua-' + Search79, 'Search79window');
+                    }
+                </script>
+                <form onsubmit="doSearch79(this.Search79.value); return false;">
+                    <input type="text" name="Search79" size="30" placeholder="Analytics ID" value="" />
+                    <input type="submit" value="AnalyzeID" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch80(Search80) {
+                        window.open('https://dnslytics.com/reverse-analytics/ua-' + Search80, 'Search80window');
+                    }
+                </script>
+                <form onsubmit="doSearch80(this.Search80.value); return false;">
+                    <input type="text" name="Search80" size="30" placeholder="Analytics ID" value="" />
+                    <input type="submit" value="DNSlytics" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch81(Search81) {
+                        window.open('https://publicwww.com/websites/%22ua-' + Search81 + '%22/', 'Search81window');
+                    }
+                </script>
+                <form onsubmit="doSearch81(this.Search81.value); return false;">
+                    <input type="text" name="Search81" size="30" placeholder="Analytics ID" value="" />
+                    <input type="submit" value="PublicWWW" /></form><br>
+
+                <script type="text/javascript">
+                    function doSearch82(Search82) {
+                        window.open('https://api.hackertarget.com/analyticslookup/?q=UA-' + Search82, 'Search82window');
+                    }
+                </script>
+                <form onsubmit="doSearch82(this.Search82.value); return false;">
+                    <input type="text" name="Search82" size="30" placeholder="Analytics ID" value="" />
+                    <input type="submit" value="HackerTarget" /></form><br>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <br><br>
+    <div class="footer">
+        <p class="copyright" style="color: black;">&copy; 2024 Dika Maulidal. All Rights Reserved.</p>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById("mySidebar");
+            var navbar = document.getElementById("myNavbar");
+            var content = document.getElementById("myContent");
+            var footer = document.querySelector(".footer");
+
+            if (sidebar.style.width === "0px" || sidebar.style.width === "") {
+                sidebar.style.width = "250px";
+                navbar.style.left = "250px";
+                navbar.style.width = "calc(100% - 250px)";
+                content.style.marginLeft = "270px";
+                footer.style.width = "calc(100% - 250px)";
+                footer.style.left = "250px";
+            } else {
+                sidebar.style.width = "0";
+                navbar.style.left = "0";
+                navbar.style.width = "100%";
+                content.style.marginLeft = "0";
+                footer.style.width = "100%";
+                footer.style.left = "0";
+            }
+        }
+    </script>
+
+</body>
+
+</html>
