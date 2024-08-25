@@ -241,6 +241,42 @@
         .card button:hover {
             background-color: #556270;
         }
+
+        .dropdown-btn {
+            padding: 10px 15px;
+            font-size: 16px;
+            color: #9f9f9f;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .dropdown-btn:hover {
+            color: #fff;
+        }
+
+        /* Style for dropdown container */
+        .dropdown-container {
+            display: none;
+            background-color: #40495a;
+            padding-left: 30px;
+        }
+
+        .dropdown-container a {
+            padding: 8px 0;
+            text-decoration: none;
+            font-size: 14px;
+            color: #9f9f9f;
+            display: block;
+        }
+
+        .dropdown-container a:hover {
+            color: #fff;
+        }
     </style>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -293,6 +329,9 @@
         <a href="images.html">
             <i class="fa-solid fa-image"></i> Image
         </a>
+        <a href="video.html">
+            <i class="fa-solid fa-video"></i> Video
+        </a>
         <a href="domain.html">
             <i class="fa-solid fa-globe"></i> Domain
         </a>
@@ -301,6 +340,12 @@
         </a>
         <a href="#">
             <i class="fa-solid fa-car"></i> Vehicles
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-plane"></i> Flight
+        </a>
+        <a href="#">
+            <i class="fa-solid fa-ship"></i> Vessel
         </a>
         <a href="leaks.html" class="active">
             <i class="fa-solid fa-key"></i> Data Breach & Leaks
@@ -311,14 +356,26 @@
         <a href="education.html">
             <i class="fa-solid fa-school"></i> Pendidikan
         </a>
-        <a href="#">
-            <i class="fa-solid fa-landmark"></i> Goverments
-        </a>
         <a href="busniess.html">
-            <i class="fa-brands fa-sellsy"></i> Busniess</a>
-        <a href="#">
-            <i class="fa-solid fa-repeat"></i> OSINT Flow charts
-        </a>
+            <i class="fa-solid fa-landmark"></i> Busniess & Gov
+        </a><br>
+        <p style="color: white; margin-bottom: -3px;">Other :</p>
+        <button class="dropdown-btn"><i class="fa-solid fa-square-caret-right"></i> Flow charts
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="#">Sosial Media</a>
+            <a href="#">Dating</a>
+            <a href="#">Documents</a>
+        </div>
+        <button class="dropdown-btn"><i class="fa-brands fa-google"></i> CSE
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="#">Sosial Media</a>
+            <a href="#">Dating</a>
+            <a href="#">Documents</a>
+        </div>
     </div>
 
     <!-- Navbar -->
@@ -557,6 +614,22 @@
                 footer.style.left = "0";
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const dropdownButtons = document.querySelectorAll(".dropdown-btn");
+
+            dropdownButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    this.classList.toggle("active");
+                    const dropdownContent = this.nextElementSibling;
+                    if (dropdownContent.style.display === "block") {
+                        dropdownContent.style.display = "none";
+                    } else {
+                        dropdownContent.style.display = "block";
+                    }
+                });
+            });
+        });
     </script>
 
 </body>
